@@ -1,0 +1,16 @@
+#popUpBody{
+  text-align: center;
+  color: black;
+}
+#BW{
+  color: black;
+  padding: 1em;
+  font-size: 1em;
+  border: 4px solid black;
+  font-weight: bold;
+  cursor: pointer;
+}
+#BW:hover{
+  border: 4px solid gray;
+  color: rgb(0, 162, 255);
+}
