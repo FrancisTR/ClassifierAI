@@ -14,3 +14,12 @@
   border: 4px solid gray;
   color: rgb(0, 162, 255);
 }
+
+/* Status Icon */
+.FrancisTRStatusAI{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 1.2em!important;
+  height: 1.2em!important;
+}

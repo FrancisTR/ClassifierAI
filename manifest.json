@@ -3,16 +3,13 @@
   "description": "A Chrome Extension that uses Machine Learning, to perform Image Classification, to determine if the image is AI-Generated. More features coming soon!",
   "version": "0.0.1",
   "manifest_version": 3,
-  "permissions": [
-    "scripting",
-    "activeTab",
-    "tabs"
-  ],
+  "permissions": ["contextMenus", "scripting", "activeTab", "tabs"],
   "content_scripts": [
     {
       "matches": ["*://www.google.com/*"],
-      "css": ["./src/main.css"],
-      "js": ["./src/package/ml5.min.js", "./src/imageClassifier.js"]
+      "css": ["/src/main.css"],
+      "js": ["/src/package/ml5.min.js", "/src/imageClassifier.js"],
+      "run_at": "document_end"
     }
   ],
   "action": {
@@ -22,5 +19,17 @@
     "16": "./Images/ChromeIcon.png",
     "48": "./Images/ChromeIcon.png",
     "128": "./Images/ChromeIcon.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "matches": ["*://www.google.com/*"],
+      "resources": [
+        "/Images/AIFree.png",
+        "/Images/AINeutral.png",
+        "/Images/AIGenerated.png",
+        "/Images/loading.gif"
+      ],
+      "use_dynamic_url": true
+    }
+  ]
 }
