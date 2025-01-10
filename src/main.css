@@ -16,10 +16,10 @@
 }
 
 /* Status Icon */
-.FrancisTRStatusAI{
+#FrancisTRStatusAI{
   position: absolute;
   top: 10px;
   left: 10px;
-  width: 1.2em!important;
-  height: 1.2em!important;
+  width: 1.3em!important;
+  height: 1.3em!important;
 }

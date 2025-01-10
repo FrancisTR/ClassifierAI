@@ -1,8 +1,8 @@
 //Initialize our ml5 and dictionary to store image IDs from google
-let classifier = ml5.imageClassifier("MobileNet"); //Access our ml5.js for image classification
+let classifier = ml5.imageClassifier("https://teachablemachine.withgoogle.com/models/veVmi7GVA/"); //Access our ml5.js for image classification
 
 //Every img has a corresponding ID on google. We use that ID as key and the value is its parent div
-//to indicate that the image needs to be scanned. Scanned images are replaced with "" string. (WIP)
+//to indicate that the image is scanned.
 let imageClassified = {}; //Use to keep track of images on google and avoid duplicates when performing ML
 
 //Start observing the image section on google
@@ -34,37 +34,40 @@ function selfObserver(documentNode) {
 
 
 /*
-  This function is the main functionality that will perform image classification for all images on google.
+  This function is the main functionality that will perform image classification for 
+  all images on google.
 */
 function main() {
   console.log("Initiate Machine Learning");
   runML(); //Start
 
 
+
   /*
     This function gets all the image on the current page and store them in a dictionary.
-    For each image, we scan to see if the Image is AI-Generated. (WIP)
+    For each image, we scan to see if the Image is AI-Generated.
   */
   function runML() {
     // Get all the div that has this specific class name.
-    // bFtXbb CUMKHb uhHOwf BYbUcd - Inspect mode div class name.
-    let img = document.getElementsByClassName("H8Rx8c"); //This is a specific class name google used that contains an image.
+    // bFtXbb CUMKHb uhHOwf BYbUcd -dev mode
+    // H8Rx8c -normal mode
 
-    // For each div (that contains an image), we store them in a dictionary to prevent dup scans (WIP)
+    //WIP
+    // p7sI2 PUxBg -img preview (User click on image to see the img bigger)
+    // fR600b islir -img suggestion (under img preview)
+    let img = document.querySelectorAll(".bFtXbb.CUMKHb.uhHOwf.BYbUcd, .H8Rx8c"); //This is a specific class name google used that contains an image.
+
+    // For each div (that contains an image), we store them in a dictionary to prevent dup scans
     for (let i of img) {
       //If the image that we have given base on observer is new, add it
       if (!(i.getElementsByTagName("img")[0].id in imageClassified)) {
-        imageClassified[i.getElementsByTagName("img")[0].id] = "H8Rx8c"; //Store it
+        imageClassified[i.getElementsByTagName("img")[0].id] = "IMAGE"; //Store it
 
-        //Add loading.gif to indicate that the image is scanning (Never show up but just in case)
-        var statusImg = document.createElement("img");
-        statusImg.className = "FrancisTRStatusAI";
-        statusImg.src = chrome.runtime.getURL("Images/loading.gif");
-        i.appendChild(statusImg);
+        iconAssigned(null, i); //Loading icon
 
         imageClassificationScan(i); //Start the scan for that image to see if the image is Ai-Generated
-        // console.log(i.getElementsByTagName("img")[0]);
-        // console.log(i.getElementsByTagName("img")[0].id);
+        // console.log(i.getElementsByTagName("img")[0]); //Img tag
+        // console.log(i.getElementsByTagName("img")[0].id); //Img id=???
       }
     }
   }
@@ -74,32 +77,60 @@ function main() {
   /*
     This function performs image classification to determine if the image is AI-Generated.
     This will ultimately change the status icon on the webpage to show the user if the image is AI-Generated.
-    (WIP)
   */
-  function imageClassificationScan(imgID) {
+  function imageClassificationScan(imgObj) {
     //This extracts the image link from the img tag into our img Object
-    const img = new Image();
-    img.src = document.getElementById(
-      imgID.getElementsByTagName("img")[0].id
-    ).src;
-
-    //Gives us the result of our classification in decimals (WIP)
-    var result = classifier.classify(img, getResult);
-
-    //Assign icons corresponding to its result (WIP)
-    var statusImg = document.createElement("img");
-    statusImg.className = "FrancisTRStatusAI";
-    statusImg.src = chrome.runtime.getURL("Images/AIFree.png");
-    imgID.appendChild(statusImg);
+    const img = loadImage(imgObj.getElementsByTagName("img")[0].src);
+    
+    //Gives us the result of our classification (WIP)
+    let result = classifier.classify(img);
+    result.then((results) => {
+        iconAssigned(results, imgObj);
+      })
+      .catch((error) => {
+        console.error(error); // Handles any errors
+      });
   }
 
 
 
   /*
-    This function returns the result base classifying the image.
-    This will return a percentage. (WIP)
+    This helper function loads the image by config the crossorgin and assigning it to the img tag.
+    This is needed to process all images on google. 
   */
-  function getResult(results) {
-    return results;
+  function loadImage(src) {
+    var img = new Image();
+    img.setAttribute("crossorigin", "anonymous");
+    img.src = src;
+    return img;
+  }
+
+
+
+  /*
+    This function assign icons to the image base on the confidence rate. (WIP)
+    NOTE: If the confidence rate is less than 60 percent whether it is AI or not, then it is AI Neutral
+  */
+  function iconAssigned(results, imgObj) {
+    // Create the img tag for our status icon
+    var statusImg = document.createElement("img");
+    statusImg.setAttribute("id", "FrancisTRStatusAI");
+    
+    // Get our data and assign the icon (WIP)
+    try {
+      let result = [results[0].label, results[0].confidence * 100]; //Clean up data.
+      console.log(result);
+      if (result[0] === "AI"){
+        statusImg.src = chrome.runtime.getURL("Images/AIGenerated.png");
+      }else if (result[0] === "NotAI"){
+        statusImg.src = chrome.runtime.getURL("Images/AIFree.png");
+      }else{ //WIP
+        statusImg.src = chrome.runtime.getURL("Images/AINeutral.png");
+      }
+    } catch (error) {
+      statusImg.src = chrome.runtime.getURL("Images/loading.gif"); // This is the case if results is null.
+    }
+
+    imgObj.appendChild(statusImg);
   }
 }

@@ -15,6 +15,9 @@
   "action": {
     "default_popup": "./src/main.html"
   },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
   "icons": {
     "16": "./Images/ChromeIcon.png",
     "48": "./Images/ChromeIcon.png",
