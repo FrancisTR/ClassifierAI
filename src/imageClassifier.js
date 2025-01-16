@@ -66,7 +66,7 @@ function main() {
     for (let i of img) {
       //If the image that we have given base on observer is new, add it
       if (!(i.getElementsByTagName("img")[0].id in imageClassified)) {
-        imageClassified[i.getElementsByTagName("img")[0].id] = "IMAGE"; //Store it
+        imageClassified[i.getElementsByTagName("img")[0].id] = i.getElementsByTagName("img")[0].src; //Store it
 
         iconAssigned(null, i); //Loading icon
         imageClassificationScan(i); //Start the scan for that image to see if the image is Ai-Generated
