@@ -1,12 +1,12 @@
 {
   "name": "ClassifierAI",
-  "description": "A Chrome Extension that uses Machine Learning, to perform Image Classification, to determine if the image is AI-Generated. More features coming soon!",
-  "version": "0.0.1",
+  "description": "A Chrome Extension that uses Machine Learning to determine if the image is AI-Generated.",
+  "version": "1.0.0",
   "manifest_version": 3,
-  "permissions": ["contextMenus", "scripting", "activeTab", "tabs"],
+  "permissions": ["scripting", "activeTab", "tabs", "storage"],
   "content_scripts": [
     {
-      "matches": ["*://www.google.com/*"],
+      "matches": ["*://www.google.com/search?*"],
       "css": ["/src/main.css"],
       "js": ["/src/package/ml5.min.js", "/src/imageClassifier.js"],
       "run_at": "document_end"
@@ -14,9 +14,6 @@
   ],
   "action": {
     "default_popup": "./src/main.html"
-  },
-  "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'"
   },
   "icons": {
     "16": "./Images/ChromeIcon.png",

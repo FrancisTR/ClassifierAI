@@ -5,6 +5,8 @@ let classifier = ml5.imageClassifier("https://teachablemachine.withgoogle.com/mo
 //to indicate that the image is scanned.
 let imageClassified = {}; //Use to keep track of images on google and avoid duplicates when performing ML
 
+let AIData = {"NotAI": 0, "AINeutral": 0, "AIGenerated": 0, "TotalScan": 0};
+
 //Start observing the image section on google
 window.onload = () => {
   // Select the node that will be observed for mutations
@@ -33,17 +35,28 @@ function selfObserver(documentNode) {
   };
 
   // Start observing
-  observer.observe(documentNode, config);
+  try{
+    observer.observe(documentNode, config);
+  }catch(error){
+    console.log("Cannot Observe.");
+  }
 }
-
 
 /*
   This function is the main functionality that will perform image classification for 
   all images on google.
 */
 function main() {
-  console.log("Initiate Machine Learning");
-  runML(); //Start
+  // console.log("Initiate Machine Learning");
+  chrome.storage.local.get('switchStatus', function(data) {
+    if (data.switchStatus === true) {
+      runML(); //Start
+    }else{
+      //reset
+      AIData = {"NotAI": 0, "AINeutral": 0, "AIGenerated": 0, "TotalScan": 0};
+      chrome.storage.local.set({ AIDataCollected: AIData });
+    }
+  });
   imageObtain();
 
   /*
@@ -60,13 +73,16 @@ function main() {
     // fR600b islir -img suggestion (under img preview)
 
     // h11UTe add in detail button
-    let img = document.querySelectorAll(".bFtXbb.CUMKHb.uhHOwf.BYbUcd, .H8Rx8c"); //This is a specific class name google used that contains an image.
+    let img = document.querySelectorAll(
+      ".bFtXbb.CUMKHb.uhHOwf.BYbUcd, .H8Rx8c"
+    ); //This is a specific class name google used that contains an image.
 
     // For each div (that contains an image), we store them in a dictionary to prevent dup scans
     for (let i of img) {
       //If the image that we have given base on observer is new, add it
       if (!(i.getElementsByTagName("img")[0].id in imageClassified)) {
-        imageClassified[i.getElementsByTagName("img")[0].id] = i.getElementsByTagName("img")[0].src; //Store it
+        imageClassified[i.getElementsByTagName("img")[0].id] =
+          i.getElementsByTagName("img")[0].src; //Store it
 
         iconAssigned(null, i); //Loading icon
         imageClassificationScan(i); //Start the scan for that image to see if the image is Ai-Generated
@@ -86,7 +102,8 @@ function main() {
 
     //Gives us the result of our classification (WIP)
     let result = classifier.classify(img);
-    result.then((results) => {
+    result
+      .then((results) => {
         iconAssigned(results, imgObj);
       })
       .catch((error) => {
@@ -117,15 +134,20 @@ function main() {
     // Get our data and assign the icon (WIP)
     try {
       let result = [results[0].label, results[0].confidence * 100]; //Clean up data.
-      console.log(result);
+      // console.log(result);
+      AIData["TotalScan"] += 1;
 
       if ((result[0] === "AI" || result[0] === "NotAI") && result[1] <= 60.0) {
         statusImg.src = chrome.runtime.getURL("Images/AINeutral.png");
+        AIData["AINeutral"] += 1;
       } else if (result[0] === "AI" && result[1] > 60.0) {
         statusImg.src = chrome.runtime.getURL("Images/AIGenerated.png");
+        AIData["AIGenerated"] += 1;
       } else if (result[0] === "NotAI" && result[1] > 60.0) {
         statusImg.src = chrome.runtime.getURL("Images/AIFree.png");
+        AIData["NotAI"] += 1;
       }
+      chrome.storage.local.set({ AIDataCollected: AIData }); //Save data to display in main.html
     } catch (error) {
       statusImg.src = chrome.runtime.getURL("Images/loading.gif"); // This is the case if results is null.
     }
@@ -133,18 +155,22 @@ function main() {
     imgObj.appendChild(statusImg);
   }
 
-
-
   /*
     This function allows the user to get the image they click on. (WIP)
   */
   function imageObtain() {
     let detailButton = document.getElementsByClassName("h11UTe");
-    console.log(detailButton);
+    // console.log(detailButton);
 
     // If the button does not exist, add it.
-    if (detailButton[0] !== undefined && detailButton[0].querySelector("a[id='FrancisTRCustomImageDetail']") === null) {
-      let imgLink = document.getElementsByClassName('YsLeY')[0].querySelector("img[class='sFlh5c FyHeAf']");
+    if (
+      detailButton[0] !== undefined &&
+      detailButton[0].querySelector("a[id='FrancisTRCustomImageDetail']") ===
+        null
+    ) {
+      let imgLink = document
+        .getElementsByClassName("YsLeY")[0]
+        .querySelector("img[class='sFlh5c FyHeAf']");
       detailButton[0].innerHTML += `
     <a
     data-ved="0CBgQ3YkBahcKEwjQ6L63--uKAxUAAAAAHQAAAAAQBA"
