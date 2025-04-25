@@ -1,5 +1,5 @@
 //Initialize our ml5 and dictionary to store image IDs from google
-let classifier = ml5.imageClassifier("https://teachablemachine.withgoogle.com/models/veVmi7GVA/"); //Access our ml5.js for image classification
+let classifier = ml5.imageClassifier("https://teachablemachine.withgoogle.com/models/Z7sdOoyx6/"); //Access our ml5.js for image classification
 
 //Every img has a corresponding ID on google. We use that ID as key and the value is its parent div
 //to indicate that the image is scanned.
