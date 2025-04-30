@@ -3,10 +3,10 @@
 ## Description
 A Google Chrome Extension that integrates Machine Learning to determine if the image, that the user is viewing, is AI-Generated. This uses ml5.js, which is built on top of Tensorflow.js, to perform Image Classification.
 
-(IN PROGRESS) The model is trained using [Teachable Machine](https://teachablemachine.withgoogle.com/) by Google where it is train from 4000 images, that consists of AI and Non-AI images, using the following settings:
-- Epochs: 100
-- Batch Size: 16
-- Learning Rate: 0.001
+(IN PROGRESS) The model is trained using [Teachable Machine](https://teachablemachine.withgoogle.com/) by Google where it is train from 1832 images, that consists of AI and Non-AI images, using the following settings:
+- Epochs: 20
+- Batch Size: 32
+- Learning Rate: 0.0001
 
 ## Technologies Used
 - HTML <img width="3%" src="https://github.com/FrancisTR/FrancisTR.github.io/assets/123771828/6e8fc77f-c210-45fe-abd4-004b65d604f5" />
