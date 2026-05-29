@@ -1,11 +1,15 @@
+import ml5 from "./package/ml5.min.js";
+
 //Initialize our ml5 and dictionary to store image IDs from google
-let classifier = ml5.imageClassifier("https://teachablemachine.withgoogle.com/models/Z7sdOoyx6/"); //Access our ml5.js for image classification
+let classifier = ml5.imageClassifier(
+  "https://teachablemachine.withgoogle.com/models/Z7sdOoyx6/",
+); //Access our ml5.js for image classification
 
 //Every img has a corresponding ID on google. We use that ID as key and the value is its parent div
 //to indicate that the image is scanned.
 let imageClassified = {}; //Use to keep track of images on google and avoid duplicates when performing ML
 
-let AIData = {"NotAI": 0, "AINeutral": 0, "AIGenerated": 0, "TotalScan": 0};
+let AIData = { NotAI: 0, AINeutral: 0, AIGenerated: 0, TotalScan: 0 };
 
 //Start observing the image section on google
 window.onload = () => {
@@ -35,9 +39,9 @@ function selfObserver(documentNode) {
   };
 
   // Start observing
-  try{
+  try {
     observer.observe(documentNode, config);
-  }catch(error){
+  } catch (error) {
     console.log("Cannot Observe.");
   }
 }
@@ -48,12 +52,12 @@ function selfObserver(documentNode) {
 */
 function main() {
   // console.log("Initiate Machine Learning");
-  chrome.storage.local.get('switchStatus', function(data) {
+  chrome.storage.local.get("switchStatus", function (data) {
     if (data.switchStatus === true) {
       runML(); //Start
-    }else{
+    } else {
       //reset
-      AIData = {"NotAI": 0, "AINeutral": 0, "AIGenerated": 0, "TotalScan": 0};
+      AIData = { NotAI: 0, AINeutral: 0, AIGenerated: 0, TotalScan: 0 };
       chrome.storage.local.set({ AIDataCollected: AIData });
     }
   });
@@ -74,7 +78,7 @@ function main() {
 
     // h11UTe add in detail button
     let img = document.querySelectorAll(
-      ".bFtXbb.CUMKHb.uhHOwf.BYbUcd, .H8Rx8c"
+      ".bFtXbb.CUMKHb.uhHOwf.BYbUcd, .H8Rx8c",
     ); //This is a specific class name google used that contains an image.
 
     // For each div (that contains an image), we store them in a dictionary to prevent dup scans
