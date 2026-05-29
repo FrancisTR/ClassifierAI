@@ -7,18 +7,10 @@
     "dev": "vite",
     "build": "vite build"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/CodingWithJiro/ClassifierAI.git"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
-  "bugs": {
-    "url": "https://github.com/CodingWithJiro/ClassifierAI/issues"
-  },
-  "homepage": "https://github.com/CodingWithJiro/ClassifierAI#readme",
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.4.0",
     "patch-package": "^8.0.1",
