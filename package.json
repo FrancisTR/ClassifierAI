@@ -1,0 +1,24 @@
+{
+  "name": "classifierai",
+  "version": "1.0.0",
+  "description": "A Google Chrome Extension that integrates Machine Learning to determine if the image, that the user is viewing, is AI-Generated. This uses ml5.js, which is built on top of Tensorflow.js, to perform Image Classification.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodingWithJiro/ClassifierAI.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/CodingWithJiro/ClassifierAI/issues"
+  },
+  "homepage": "https://github.com/CodingWithJiro/ClassifierAI#readme",
+  "devDependencies": {
+    "vite": "^8.0.14"
+  }
+}
