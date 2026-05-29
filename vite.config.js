@@ -5,6 +5,7 @@ export default defineConfig({
     rolldownOptions: {
       input: {
         popup: "src/main.html",
+        content: "src/imageClassifier.js",
       },
     },
   },
