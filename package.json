@@ -17,7 +17,8 @@
     "vite": "^8.0.14"
   },
   "dependencies": {
-    "bootstrap": "^5.3.8",
-    "ml5": "^1.0.1"
+    "@tailwindcss/vite": "^4.3.0",
+    "ml5": "^1.0.1",
+    "tailwindcss": "^4.3.0"
   }
 }

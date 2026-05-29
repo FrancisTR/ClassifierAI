@@ -25,31 +25,38 @@
     <title>ClassifierAI</title>
   </head>
 
-  <body id="popUpBody" class="text-center p-3">
-    <div class="d-flex justify-content-center">
-      <div class="form-check form-switch align-self-center">
-        <input class="form-check-input" type="checkbox" id="AICheck" />
-        <p>AI Image Scan</p>
-      </div>
+  
+<body id="popUpBody" class="text-center p-3">
+    <div class="flex justify-center">
+      <label for="AICheck" class="inline-flex items-center gap-3 cursor-pointer">
+        <input type="checkbox" id="AICheck" class="peer sr-only" />
+        <div
+          class="relative h-6 w-11 rounded-full bg-slate-300 transition-colors duration-200 peer-checked:bg-cyan-500 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:duration-200 after:content-[''] peer-checked:after:translate-x-5"
+        ></div>
+        <p class="m-0">AI Image Scan</p>
+      </label>
     </div>
 
-    <div class="AIStatus p-3">
-      <p>Based on <span id="TotalImageScan">0</span> images:</p>
-      <div>
+    <div class="AIStatus p-3 mt-3">
+      <p class="mb-3">Based on <span id="TotalImageScan">0</span> images:</p>
+
+      <div class="flex items-center justify-center gap-2 py-1">
         <img src="../Images/AIFree.png" width="25em" />
-        <p><span id="NotAIStat">0</span> are not AI generated</p>
+        <p class="m-0"><span id="NotAIStat">0</span> are not AI generated</p>
       </div>
-      <div>
+
+      <div class="flex items-center justify-center gap-2 py-1">
         <img src="../Images/AINeutral.png" width="25em" />
-        <p><span id="AINeutralStat">0</span> could be AI generated</p>
+        <p class="m-0"><span id="AINeutralStat">0</span> could be AI generated</p>
       </div>
-      <div>
+
+      <div class="flex items-center justify-center gap-2 py-1">
         <img src="../Images/AIGenerated.png" width="25em" />
-        <p><span id="AIGenStat">0</span> are AI generated</p>
+        <p class="m-0"><span id="AIGenStat">0</span> are AI generated</p>
       </div>
     </div>
 
-    <h6 class="m-2">Thank you for using ClassifierAI</h6>
+    <h6 class="m-2 text-sm font-semibold">Thank you for using ClassifierAI</h6>
 
     <script type="module" src="popup.js"></script>
   </body>
