@@ -4,7 +4,9 @@
   "description": "A Google Chrome Extension that integrates Machine Learning to determine if the image, that the user is viewing, is AI-Generated. This uses ml5.js, which is built on top of Tensorflow.js, to perform Image Classification.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite",
+    "build": "vite build"
   },
   "repository": {
     "type": "git",
