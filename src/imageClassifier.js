@@ -1,4 +1,4 @@
-import ml5 from "./package/ml5.min.js";
+import ml5 from "ml5";
 
 //Initialize our ml5 and dictionary to store image IDs from google
 let classifier = ml5.imageClassifier(

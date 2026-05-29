@@ -1,10 +1,12 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+
 /* This CSS is only used to edit the actual page on the web */
 
 /* Status Icon */
-#FrancisTRStatusAI{
+#FrancisTRStatusAI {
   position: absolute;
   top: 10px;
   left: 10px;
-  width: 1.3em!important;
-  height: 1.3em!important;
+  width: 1.3em !important;
+  height: 1.3em !important;
 }
