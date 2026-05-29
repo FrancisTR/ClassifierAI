@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/CodingWithJiro/ClassifierAI#readme",
   "devDependencies": {
+    "@crxjs/vite-plugin": "^2.4.0",
     "vite": "^8.0.14"
   }
 }
