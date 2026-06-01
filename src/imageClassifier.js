@@ -1,9 +1,28 @@
-import ml5 from "ml5";
+import * as tf from "@tensorflow/tfjs";
 
-//Initialize our ml5 and dictionary to store image IDs from google
-let classifier = ml5.imageClassifier(
-  "https://teachablemachine.withgoogle.com/models/Z7sdOoyx6/",
-); //Access our ml5.js for image classification
+const MODEL_BASE_URL = "https://teachablemachine.withgoogle.com/models/Z7sdOoyx6/";
+const MODEL_URL = `${MODEL_BASE_URL}model.json`;
+const METADATA_URL = `${MODEL_BASE_URL}metadata.json`;
+
+let modelPromise = loadModel();
+
+async function loadModel() {
+  await tf.ready();
+  if (tf.setBackend) {
+    try {
+      await tf.setBackend("webgl");
+    } catch (error) {
+      console.warn("TensorFlow.js WebGL backend unavailable, using default backend.", error);
+    }
+  }
+
+  const [model, metadata] = await Promise.all([
+    tf.loadLayersModel(MODEL_URL),
+    fetch(METADATA_URL).then((response) => response.json()),
+  ]);
+
+  return { model, metadata };
+}
 
 //Every img has a corresponding ID on google. We use that ID as key and the value is its parent div
 //to indicate that the image is scanned.
@@ -100,19 +119,18 @@ function main() {
     This function performs image classification to determine if the image is AI-Generated.
     This will ultimately change the status icon on the webpage to show the user if the image is AI-Generated.
   */
-  function imageClassificationScan(imgObj) {
+  async function imageClassificationScan(imgObj) {
     //This extracts the image link from the img tag into our img Object
     const img = loadImage(imgObj.getElementsByTagName("img")[0].src);
 
-    //Gives us the result of our classification (WIP)
-    let result = classifier.classify(img);
-    result
-      .then((results) => {
-        iconAssigned(results, imgObj);
-      })
-      .catch((error) => {
-        console.log(error); // Handles any errors
-      });
+    try {
+      await waitForImageLoad(img);
+      const results = await classifyImage(img);
+      iconAssigned(results, imgObj);
+    } catch (error) {
+      console.log("Image classification failed", error);
+      iconAssigned(null, imgObj);
+    }
   }
 
   /*
@@ -120,10 +138,49 @@ function main() {
     This is needed to process all images on google. 
   */
   function loadImage(src) {
-    var img = new Image();
+    const img = new Image();
     img.setAttribute("crossorigin", "anonymous");
     img.src = src;
     return img;
+  }
+
+  function waitForImageLoad(img) {
+    return new Promise((resolve, reject) => {
+      if (img.complete && img.naturalWidth > 0) {
+        resolve();
+      } else {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error("Image load failed"));
+      }
+    });
+  }
+
+  async function classifyImage(imageElement) {
+    const { model, metadata } = await modelPromise;
+    const imageSize = metadata.imageSize || 224;
+    const labels = metadata.labels || [];
+
+    const tensor = tf.browser
+      .fromPixels(imageElement)
+      .resizeBilinear([imageSize, imageSize])
+      .toFloat()
+      .div(tf.scalar(255))
+      .expandDims();
+
+    let prediction = model.predict(tensor);
+    if (Array.isArray(prediction)) {
+      prediction = prediction[0];
+    }
+
+    const scores = prediction.dataSync ? prediction.dataSync() : await prediction.data();
+    tf.dispose([tensor, prediction]);
+
+    const results = Array.from(scores).map((confidence, index) => ({
+      label: labels[index] || `Class ${index}`,
+      confidence,
+    }));
+
+    return results.sort((a, b) => b.confidence - a.confidence);
   }
 
   /*
