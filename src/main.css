@@ -102,3 +102,53 @@ body.francis-ai-sidebar-open {
   font-size: 1rem;
   font-weight: 600;
 }
+
+.francis-ai-training-status {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.francis-ai-status-text {
+  margin: 0 0 8px 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(245, 249, 255, 0.7);
+}
+
+.francis-ai-count {
+  font-size: 0.95rem;
+  color: #76d4ff;
+  font-weight: 600;
+}
+
+.francis-ai-train-btn {
+  margin-top: auto;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #76d4ff 0%, #4fc3f7 100%);
+  color: #004a80;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.francis-ai-train-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 195, 247, 0.4);
+}
+
+.francis-ai-train-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.francis-ai-train-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
