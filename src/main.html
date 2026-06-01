@@ -25,13 +25,15 @@
     <title>ClassifierAI</title>
   </head>
 
-  
-<body id="popUpBody" class="text-center p-3">
+  <body id="popUpBody" class="text-center p-3">
     <div class="flex justify-center">
-      <label for="AICheck" class="inline-flex items-center gap-3 cursor-pointer">
+      <label
+        for="AICheck"
+        class="inline-flex items-center gap-3 cursor-pointer"
+      >
         <input type="checkbox" id="AICheck" class="peer sr-only" />
         <div
-          class="relative h-6 w-11 rounded-full bg-slate-300 transition-colors duration-200 peer-checked:bg-cyan-500 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:duration-200 after:content-[''] peer-checked:after:translate-x-5"
+          class="relative h-6 w-11 rounded-full bg-slate-300 transition-colors duration-200 peer-checked:bg-cyan-500 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:duration-200 after:content-[''] peer-checked:after:translate-x-5"
         ></div>
         <p class="m-0">AI Image Scan</p>
       </label>
@@ -47,7 +49,9 @@
 
       <div class="flex items-center justify-center gap-2 py-1">
         <img src="../Images/AINeutral.png" width="25em" />
-        <p class="m-0"><span id="AINeutralStat">0</span> could be AI generated</p>
+        <p class="m-0">
+          <span id="AINeutralStat">0</span> could be AI generated
+        </p>
       </div>
 
       <div class="flex items-center justify-center gap-2 py-1">
