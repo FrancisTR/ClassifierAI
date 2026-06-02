@@ -42,27 +42,37 @@
     </header>
 
     <main class="AIStatus p-3 mt-3">
-      <div class="flex items-center justify-center gap-2 py-1">
-        <img src="../Images/AIFree.png" width="25em" />
-
-        <p class="m-0"><span id="NotAIStat">0</span> are not AI generated</p>
+      <div>
+        <p id="TotalImageScan">0</p>
+        <p class="mb-3">Images Scanned</p>
       </div>
 
       <div class="flex items-center justify-center gap-2 py-1">
-        <img src="../Images/AINeutral.png" width="25em" />
+        <div>
+          <img src="../Images/AIFree.png" width="25em" />
+          <p class="m-0">Human</p>
+        </div>
 
-        <p class="m-0">
-          <span id="AINeutralStat">0</span> could be AI generated
-        </p>
+        <p id="NotAIStat">0</p>
       </div>
 
       <div class="flex items-center justify-center gap-2 py-1">
-        <img src="../Images/AIGenerated.png" width="25em" />
+        <div>
+          <img src="../Images/AINeutral.png" width="25em" />
+          <p class="m-0">Unsure</p>
+        </div>
 
-        <p class="m-0"><span id="AIGenStat">0</span> are AI generated</p>
+        <p id="AINeutralStat">0</p>
       </div>
 
-      <p class="mb-3"><span id="TotalImageScan">0</span> images scanned</p>
+      <div class="flex items-center justify-center gap-2 py-1">
+        <div>
+          <img src="../Images/AIGenerated.png" width="25em" />
+          <p class="m-0">AI Generated</p>
+        </div>
+
+        <p id="AIGenStat">0</p>
+      </div>
     </main>
 
     <footer>
