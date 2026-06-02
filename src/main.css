@@ -2,10 +2,6 @@
 
 /* This CSS is only used to edit the actual page on the web */
 
-body.francis-ai-sidebar-open {
-  overflow: hidden;
-}
-
 /* Status Icon */
 #FrancisTRStatusAI {
   position: absolute;
@@ -13,92 +9,4 @@ body.francis-ai-sidebar-open {
   left: 10px;
   width: 1.3em !important;
   height: 1.3em !important;
-}
-
-.francis-ai-sidebar-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-  z-index: 9998;
-}
-
-.francis-ai-sidebar-backdrop.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.francis-ai-sidebar {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: min(320px, 100vw);
-  height: 100vh;
-  padding: 20px;
-  background: linear-gradient(180deg, #005f97 0%, #023e61 100%);
-  color: #f5f9ff;
-  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.35);
-  transform: translateX(100%);
-  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  overflow-y: auto;
-}
-
-.francis-ai-sidebar.visible {
-  transform: translateX(0);
-}
-
-.francis-ai-sidebar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.francis-ai-sidebar-header h2 {
-  margin: 0;
-  font-size: 1.2rem;
-}
-
-.francis-ai-sidebar-close {
-  border: none;
-  background: rgba(255, 255, 255, 0.16);
-  color: #f5f9ff;
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: 1.4rem;
-  line-height: 0.9;
-}
-
-.francis-ai-sidebar-copy {
-  margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: rgba(245, 249, 255, 0.86);
-}
-
-.francis-ai-option {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-}
-
-.francis-ai-option input[type="radio"] {
-  accent-color: #76d4ff;
-}
-
-.francis-ai-option label {
-  font-size: 1rem;
-  font-weight: 600;
 }

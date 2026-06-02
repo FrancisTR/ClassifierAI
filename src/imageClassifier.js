@@ -65,64 +65,6 @@ function selfObserver(documentNode) {
   }
 }
 
-function createClassifierSidebar() {
-  if (document.getElementById("FrancisTRSidebarBackdrop")) return;
-
-  const backdrop = document.createElement("div");
-  backdrop.id = "FrancisTRSidebarBackdrop";
-  backdrop.className = "francis-ai-sidebar-backdrop";
-  backdrop.addEventListener("click", (e) => {
-    if (e.target === backdrop) hideClassifierSidebar();
-  });
-
-  const sidebar = document.createElement("aside");
-  sidebar.id = "FrancisClassifierSidebar";
-  sidebar.className = "francis-ai-sidebar";
-  sidebar.innerHTML = `
-    <div class="francis-ai-sidebar-header">
-      <h2>ClassifierAI</h2>
-      <button id="FrancisTRSidebarClose" class="francis-ai-sidebar-close" type="button" aria-label="Close sidebar">×</button>
-    </div>
-    <p class="francis-ai-sidebar-copy">What is the image being Classified as?</p>
-    <div class="francis-ai-option">
-      <input type="radio" id="FrancisTROptionAI" name="FrancifierOption" disabled />
-      <label for="FrancisTROptionAI">AI</label>
-    </div>
-    <div class="francis-ai-option">
-      <input type="radio" id="FrancisTROptionNotAI" name="FrancifierOption" disabled />
-      <label for="FrancisTROptionNotAI">Not AI</label>
-    </div>
-  `;
-
-  document.body.appendChild(backdrop);
-  document.body.appendChild(sidebar);
-
-  const closeBtn = document.getElementById("FrancisTRSidebarClose");
-  if (closeBtn) {
-    closeBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      hideClassifierSidebar();
-    });
-  }
-}
-
-function showClassifierSidebar() {
-  createClassifierSidebar();
-  const backdrop = document.getElementById("FrancisTRSidebarBackdrop");
-  const sidebar = document.getElementById("FrancisClassifierSidebar");
-  document.body.classList.add("francis-ai-sidebar-open");
-  if (backdrop) backdrop.classList.add("visible");
-  if (sidebar) sidebar.classList.add("visible");
-}
-
-function hideClassifierSidebar() {
-  const backdrop = document.getElementById("FrancisTRSidebarBackdrop");
-  const sidebar = document.getElementById("FrancisClassifierSidebar");
-  document.body.classList.remove("francis-ai-sidebar-open");
-  if (backdrop) backdrop.classList.remove("visible");
-  if (sidebar) sidebar.classList.remove("visible");
-}
-
 /*
   This function is the main functionality that will perform image classification for 
   all images on google.
@@ -308,31 +250,7 @@ function main() {
       </svg>
     </div>
   </a>
-  <a
-    href="#"
-    role="button"
-    class="umNKYc"
-    id="FrancisTRCustomImageClassify"
-  >
-    <div class="MjJqGe ibX8Cd PMUcxf re5Hve cd29Sd kM7Sgc">
-      <span class="iLgTbf PMUcxf cS4Vcb-pGL6qe-lfQAOe">Classify</span>
-      <svg viewBox="0 0 24 24" focusable="false" height="18" width="18">
-        <path d="M0 0h24v24H0z" fill="none"></path>
-        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
-      </svg>
-    </div>
-  </a>
     `;
-
-      const classifyButton = detailButton[0].querySelector(
-        "#FrancisTRCustomImageClassify",
-      );
-      if (classifyButton) {
-        classifyButton.onclick = function (event) {
-          event.preventDefault();
-          showClassifierSidebar();
-        };
-      }
     }
   }
 }
