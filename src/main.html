@@ -20,12 +20,15 @@
         background: #002645;
         border: 1px solid rgba(255, 255, 255, 0.25);
         border-radius: 12px;
+        box-shadow:
+          0 4px 12px rgba(0, 0, 0, 0.18),
+          0 1px 2px rgba(0, 0, 0, 0.1);
       }
     </style>
     <title>ClassifierAI</title>
   </head>
 
-  <body id="popUpBody" class="text-center p-3">
+  <body id="popUpBody" class="text-center py-3 px-6">
     <header class="flex justify-center mt-4 mb-4">
       <label
         for="AICheck"
@@ -42,17 +45,17 @@
     </header>
 
     <main class="AIStatus py-4 px-8 mb-4">
-      <div>
+      <header>
         <p id="TotalImageScan" class="text-4xl font-bold leading-tight">0</p>
         <p class="mb-4 text-sm text-slate-300 tracking-wide">Images Scanned</p>
-      </div>
+      </header>
 
       <ul class="flex flex-col">
         <li
           class="flex items-center justify-between border-b-[rgba(255,255,255,0.15)] border-b py-4"
         >
           <div class="flex gap-4 flex-row items-center">
-            <img src="../Images/AIFree.png" width="25em" />
+            <img src="../Images/AIFree.png" width="35" />
             <p class="text-base text-slate-100">Human</p>
           </div>
 
@@ -63,7 +66,7 @@
           class="flex items-center justify-between border-b-[rgba(255,255,255,0.15)] border-b py-4"
         >
           <div class="flex gap-4 flex-row items-center">
-            <img src="../Images/AINeutral.png" width="25em" />
+            <img src="../Images/AINeutral.png" width="35" />
             <p class="text-base text-slate-100">Unsure</p>
           </div>
 
@@ -72,7 +75,7 @@
 
         <li class="flex items-center justify-between py-4">
           <div class="flex gap-4 flex-row items-center">
-            <img src="../Images/AIGenerated.png" width="25em" />
+            <img src="../Images/AIGenerated.png" width="35" />
             <p class="text-base text-slate-100">AI Generated</p>
           </div>
 
