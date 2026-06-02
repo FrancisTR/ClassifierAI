@@ -24,40 +24,64 @@ async function loadModel() {
   return { model, metadata };
 }
 
-//Every img has a corresponding ID on google. We use that ID as key and the value is its parent div
-//to indicate that the image is scanned.
-let imageClassified = {}; //Use to keep track of images on google and avoid duplicates when performing ML
-
+let imageClassified = {};
 let AIData = { NotAI: 0, AINeutral: 0, AIGenerated: 0, TotalScan: 0 };
 
-//Start observing the image section on google
+let lastUrl = location.href;
+
+//Start observing
 window.onload = () => {
-  // Select the node that will be observed for mutations
-  const targetNode = document.getElementById("gsr"); // whole HTML page on the image section on google
+  const targetNode =
+    document.getElementById("page-content") || document.body;
+
   selfObserver(targetNode);
+
+  main();
+  observeUrlChange();
 };
 
 /*
-  This function is responsible for observing the web page.
-  If any changes occur on the webpage, call the main function to perform its tasks.
+  Wait until the cover image exists before scanning
 */
+function waitForImagesAndRun() {
+  const interval = setInterval(() => {
+    let imgs = document.querySelectorAll(
+      ".crayons-article__cover, .crayons-article__main-image"
+    );
+
+    if (imgs.length > 0) {
+      clearInterval(interval);
+      main();
+    }
+  }, 200);
+}
+
+/*
+  Detect SPA navigation
+*/
+function observeUrlChange() {
+  setInterval(() => {
+    if (location.href !== lastUrl) {
+      lastUrl = location.href;
+
+      imageClassified = {};
+
+      // Wait until article image is actually present
+      waitForImagesAndRun();
+    }
+  }, 300);
+}
+
 function selfObserver(documentNode) {
-  // Create an observer instance for main
   const observer = new MutationObserver(function () {
     main();
   });
 
-  // Options for the observer (which mutations to observe)
   const config = {
-    attributes: true,
     childList: true,
     subtree: true,
-    attributeOldValue: true,
-    characterData: true,
-    characterDataOldValue: true,
   };
 
-  // Start observing
   try {
     observer.observe(documentNode, config);
   } catch (error) {
@@ -65,62 +89,35 @@ function selfObserver(documentNode) {
   }
 }
 
-/*
-  This function is the main functionality that will perform image classification for 
-  all images on google.
-*/
 function main() {
-  // console.log("Initiate Machine Learning");
   chrome.storage.local.get("switchStatus", function (data) {
     if (data.switchStatus === true) {
-      runML(); //Start
+      runML();
     } else {
-      //reset
       AIData = { NotAI: 0, AINeutral: 0, AIGenerated: 0, TotalScan: 0 };
       chrome.storage.local.set({ AIDataCollected: AIData });
     }
   });
-  imageObtain();
 
-  /*
-    This function gets all the image on the current page and store them in a dictionary.
-    For each image, we scan to see if the Image is AI-Generated.
-  */
   function runML() {
-    // Get all the div that has this specific class name.
-    // bFtXbb CUMKHb uhHOwf BYbUcd -dev mode
-    // H8Rx8c -normal mode
-
-    //WIP
-    // p7sI2 PUxBg -img preview (User click on image to see the img bigger)
-    // fR600b islir -img suggestion (under img preview)
-
-    // h11UTe add in detail button
     let img = document.querySelectorAll(
-      ".bFtXbb.CUMKHb.uhHOwf.BYbUcd, .H8Rx8c",
-    ); //This is a specific class name google used that contains an image.
+      ".crayons-article__cover, .crayons-article__main-image"
+    );
 
-    // For each div (that contains an image), we store them in a dictionary to prevent dup scans
     for (let i of img) {
-      //If the image that we have given base on observer is new, add it
-      if (!(i.getElementsByTagName("img")[0].id in imageClassified)) {
-        imageClassified[i.getElementsByTagName("img")[0].id] =
-          i.getElementsByTagName("img")[0].src; //Store it
+      const imgTag = i.getElementsByTagName("img")[0];
+      if (!imgTag) continue;
 
-        iconAssigned(null, i); //Loading icon
-        imageClassificationScan(i); //Start the scan for that image to see if the image is Ai-Generated
-        // console.log(i.getElementsByTagName("img")[0]); //Img tag
-        // console.log(i.getElementsByTagName("img")[0].id); //Img id=???
+      if (!(imgTag.src in imageClassified)) {
+        imageClassified[imgTag.src] = imgTag.src;
+
+        iconAssigned(null, i);
+        imageClassificationScan(i);
       }
     }
   }
 
-  /*
-    This function performs image classification to determine if the image is AI-Generated.
-    This will ultimately change the status icon on the webpage to show the user if the image is AI-Generated.
-  */
   async function imageClassificationScan(imgObj) {
-    //This extracts the image link from the img tag into our img Object
     const img = loadImage(imgObj.getElementsByTagName("img")[0].src);
 
     try {
@@ -133,10 +130,6 @@ function main() {
     }
   }
 
-  /*
-    This helper function loads the image by config the crossorgin and assigning it to the img tag.
-    This is needed to process all images on google. 
-  */
   function loadImage(src) {
     const img = new Image();
     img.setAttribute("crossorigin", "anonymous");
@@ -183,19 +176,12 @@ function main() {
     return results.sort((a, b) => b.confidence - a.confidence);
   }
 
-  /*
-    This function assign icons to the image base on the confidence rate. (WIP)
-    NOTE: If the confidence rate is less than 60 percent whether it is AI or not, then it is AI Neutral
-  */
   function iconAssigned(results, imgObj) {
-    // Create the img tag for our status icon
     var statusImg = document.createElement("img");
     statusImg.setAttribute("id", "FrancisTRStatusAI");
 
-    // Get our data and assign the icon (WIP)
     try {
-      let result = [results[0].label, results[0].confidence * 100]; //Clean up data.
-      // console.log(result);
+      let result = [results[0].label, results[0].confidence * 100];
       AIData["TotalScan"] += 1;
 
       if ((result[0] === "AI" || result[0] === "NotAI") && result[1] <= 60.0) {
@@ -208,49 +194,11 @@ function main() {
         statusImg.src = chrome.runtime.getURL("Images/AIFree.png");
         AIData["NotAI"] += 1;
       }
-      chrome.storage.local.set({ AIDataCollected: AIData }); //Save data to display in main.html
+      chrome.storage.local.set({ AIDataCollected: AIData });
     } catch (error) {
-      statusImg.src = chrome.runtime.getURL("Images/loading.gif"); // This is the case if results is null.
+      statusImg.src = chrome.runtime.getURL("Images/loading.gif");
     }
 
     imgObj.appendChild(statusImg);
-  }
-
-  /*
-    This function allows the user to get the image they click on. (WIP)
-  */
-  function imageObtain() {
-    let detailButton = document.getElementsByClassName("h11UTe");
-    // console.log(detailButton);
-
-    // If the button does not exist, add it.
-    if (
-      detailButton[0] !== undefined &&
-      detailButton[0].querySelector("a[id='FrancisTRCustomImageDetail']") ===
-        null
-    ) {
-      let imgLink = document
-        .getElementsByClassName("YsLeY")[0]
-        .querySelector("img[class='sFlh5c FyHeAf']");
-      detailButton[0].innerHTML += `
-    <a
-    data-ved="0CBgQ3YkBahcKEwjQ6L63--uKAxUAAAAAHQAAAAAQBA"
-    rel="noopener"
-    target="_blank"
-    href="${imgLink.src}"
-    jsaction="focus:trigger.HTIQtd;mousedown:trigger.HTIQtd;touchstart:trigger.HTIQtd;;"
-    class="umNKYc"
-    id="FrancisTRCustomImageDetail"
-  >
-    <div class="MjJqGe ibX8Cd PMUcxf re5Hve cd29Sd kM7Sgc">
-      <span class="iLgTbf PMUcxf cS4Vcb-pGL6qe-lfQAOe">Get Image</span>
-      <svg viewBox="0 0 24 24" focusable="false" height="18" width="18">
-        <path d="M0 0h24v24H0z" fill="none"></path>
-        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
-      </svg>
-    </div>
-  </a>
-    `;
-    }
   }
 }

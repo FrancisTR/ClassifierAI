@@ -12,7 +12,7 @@
   "content_scripts": [
     {
       "matches": [
-        "*://www.google.com/search?*"
+        "*://dev.to/*"
       ],
       "css": [
         "src/main.css"
@@ -34,7 +34,7 @@
   "web_accessible_resources": [
     {
       "matches": [
-        "*://www.google.com/*"
+        "*://dev.to/*"
       ],
       "resources": [
         "Images/AIFree.png",
