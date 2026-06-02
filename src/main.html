@@ -18,7 +18,7 @@
 
       .AIStatus {
         background: #002645;
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.25);
         border-radius: 12px;
       }
     </style>
@@ -47,32 +47,36 @@
         <p class="mb-4 text-sm text-slate-300 tracking-wide">Images Scanned</p>
       </div>
 
-      <ul>
-        <li class="flex items-center justify-between">
+      <ul class="flex flex-col">
+        <li
+          class="flex items-center justify-between border-b-[rgba(255,255,255,0.15)] border-b py-4"
+        >
           <div class="flex gap-4 flex-row items-center">
             <img src="../Images/AIFree.png" width="25em" />
-            <p class="m-0">Human</p>
+            <p class="text-base text-slate-100">Human</p>
           </div>
 
-          <p id="NotAIStat">0</p>
+          <p id="NotAIStat" class="text-lg font-medium text-[#22c55e]">0</p>
         </li>
 
-        <li class="flex items-center justify-between">
+        <li
+          class="flex items-center justify-between border-b-[rgba(255,255,255,0.15)] border-b py-4"
+        >
           <div class="flex gap-4 flex-row items-center">
             <img src="../Images/AINeutral.png" width="25em" />
-            <p class="m-0">Unsure</p>
+            <p class="text-base text-slate-100">Unsure</p>
           </div>
 
-          <p id="AINeutralStat">0</p>
+          <p id="AINeutralStat" class="text-lg font-medium text-[#facc15]">0</p>
         </li>
 
-        <li class="flex items-center justify-between">
+        <li class="flex items-center justify-between py-4">
           <div class="flex gap-4 flex-row items-center">
             <img src="../Images/AIGenerated.png" width="25em" />
-            <p class="m-0">AI Generated</p>
+            <p class="text-base text-slate-100">AI Generated</p>
           </div>
 
-          <p id="AIGenStat">0</p>
+          <p id="AIGenStat" class="text-lg font-medium text-[#ef4444]">0</p>
         </li>
       </ul>
     </main>
