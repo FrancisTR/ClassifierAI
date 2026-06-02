@@ -12,52 +12,83 @@
       }
 
       #popUpBody {
-        color: rgb(255, 255, 255);
-        background-color: rgb(0, 76, 121);
+        color: #f8fafc;
+        background: #012444;
       }
 
       .AIStatus {
-        border: 4px solid black;
-        background-color: rgb(0, 53, 83);
-        border-radius: 0.5em;
+        background: #002645;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 12px;
+        box-shadow:
+          0 4px 12px rgba(0, 0, 0, 0.18),
+          0 1px 2px rgba(0, 0, 0, 0.1);
       }
     </style>
     <title>ClassifierAI</title>
   </head>
 
-  
-<body id="popUpBody" class="text-center p-3">
-    <div class="flex justify-center">
-      <label for="AICheck" class="inline-flex items-center gap-3 cursor-pointer">
+  <body id="popUpBody" class="text-center py-3 px-6">
+    <header class="flex justify-center mt-4 mb-4">
+      <label
+        for="AICheck"
+        class="inline-flex items-center gap-4 cursor-pointer"
+      >
         <input type="checkbox" id="AICheck" class="peer sr-only" />
+
+        <h1 class="font-medium text-base tracking-wide">Classifier AI</h1>
+
         <div
-          class="relative h-6 w-11 rounded-full bg-slate-300 transition-colors duration-200 peer-checked:bg-cyan-500 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:duration-200 after:content-[''] peer-checked:after:translate-x-5"
+          class="relative h-6 w-11 rounded-full bg-slate-500 transition-colors duration-200 peer-checked:bg-blue-600 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:duration-200 after:content-[''] peer-checked:after:translate-x-5"
         ></div>
-        <p class="m-0">AI Image Scan</p>
       </label>
-    </div>
+    </header>
 
-    <div class="AIStatus p-3 mt-3">
-      <p class="mb-3">Based on <span id="TotalImageScan">0</span> images:</p>
+    <main class="AIStatus py-4 px-8 mb-4">
+      <header>
+        <p id="TotalImageScan" class="text-4xl font-bold leading-tight">0</p>
+        <p class="mb-4 text-sm text-slate-300 tracking-wide">Images Scanned</p>
+      </header>
 
-      <div class="flex items-center justify-center gap-2 py-1">
-        <img src="../Images/AIFree.png" width="25em" />
-        <p class="m-0"><span id="NotAIStat">0</span> are not AI generated</p>
-      </div>
+      <ul class="flex flex-col">
+        <li
+          class="flex items-center justify-between border-b-[rgba(255,255,255,0.15)] border-b py-4"
+        >
+          <div class="flex gap-4 flex-row items-center">
+            <img src="../Images/AIFree.png" width="35" />
+            <p class="text-base text-slate-100">Human</p>
+          </div>
 
-      <div class="flex items-center justify-center gap-2 py-1">
-        <img src="../Images/AINeutral.png" width="25em" />
-        <p class="m-0"><span id="AINeutralStat">0</span> could be AI generated</p>
-      </div>
+          <p id="NotAIStat" class="text-lg font-medium text-[#22c55e]">0</p>
+        </li>
 
-      <div class="flex items-center justify-center gap-2 py-1">
-        <img src="../Images/AIGenerated.png" width="25em" />
-        <p class="m-0"><span id="AIGenStat">0</span> are AI generated</p>
-      </div>
-    </div>
+        <li
+          class="flex items-center justify-between border-b-[rgba(255,255,255,0.15)] border-b py-4"
+        >
+          <div class="flex gap-4 flex-row items-center">
+            <img src="../Images/AINeutral.png" width="35" />
+            <p class="text-base text-slate-100">Unsure</p>
+          </div>
 
-    <h6 class="m-2 text-sm font-semibold">Thank you for using ClassifierAI</h6>
+          <p id="AINeutralStat" class="text-lg font-medium text-[#facc15]">0</p>
+        </li>
 
+        <li class="flex items-center justify-between py-4">
+          <div class="flex gap-4 flex-row items-center">
+            <img src="../Images/AIGenerated.png" width="35" />
+            <p class="text-base text-slate-100">AI Generated</p>
+          </div>
+
+          <p id="AIGenStat" class="text-lg font-medium text-[#ef4444]">0</p>
+        </li>
+      </ul>
+    </main>
+
+    <footer>
+      <p class="m-2 text-[0.75rem] text-slate-400">
+        Thank you for using ClassifierAI
+      </p>
+    </footer>
     <script type="module" src="popup.js"></script>
   </body>
 </html>
