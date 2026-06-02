@@ -13,11 +13,11 @@
 
       #popUpBody {
         color: #f8fafc;
-        background: #0b4f7d;
+        background: #012444;
       }
 
       .AIStatus {
-        background: #083a5c;
+        background: #002645;
         border: 1px solid rgba(255, 255, 255, 0.15);
         border-radius: 12px;
       }
@@ -26,22 +26,22 @@
   </head>
 
   <body id="popUpBody" class="text-center p-3">
-    <header class="flex justify-center">
+    <header class="flex justify-center mt-4 mb-4">
       <label
         for="AICheck"
-        class="inline-flex items-center gap-3 cursor-pointer"
+        class="inline-flex items-center gap-4 cursor-pointer"
       >
         <input type="checkbox" id="AICheck" class="peer sr-only" />
 
-        <h1 class="m-0">Classifier AI</h1>
+        <h1 class="font-medium text-base tracking-wide">Classifier AI</h1>
 
         <div
-          class="relative h-6 w-11 rounded-full bg-slate-300 transition-colors duration-200 peer-checked:bg-cyan-500 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:duration-200 after:content-[''] peer-checked:after:translate-x-5"
+          class="relative h-6 w-11 rounded-full bg-slate-500 transition-colors duration-200 peer-checked:bg-blue-600 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:duration-200 after:content-[''] peer-checked:after:translate-x-5"
         ></div>
       </label>
     </header>
 
-    <main class="AIStatus p-3 mt-3">
+    <main class="AIStatus p-5">
       <div>
         <p id="TotalImageScan">0</p>
         <p class="mb-3">Images Scanned</p>
