@@ -6,6 +6,9 @@ const chartData = {
   datasets: [
     {
       data: [72, 18, 10],
+      backgroundColor: ["#22c55e", "#facc15", "#ef4444"],
+      cutout: "70%",
+      borderWidth: 0,
     },
   ],
 };
@@ -13,6 +16,15 @@ const chartData = {
 new Chart(chartCanvas, {
   type: "doughnut",
   data: chartData,
+  options: {
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
+    responsive: true,
+    maintainAspectRatio: false,
+  },
 });
 
 //Automatically update the stats on the popup html in real time
