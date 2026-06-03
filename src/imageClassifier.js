@@ -1,6 +1,5 @@
 import * as tf from "@tensorflow/tfjs";
 
-
 const MODEL_BASE_URL = "https://teachablemachine.withgoogle.com/models/Z7sdOoyx6/";
 const MODEL_URL = `${MODEL_BASE_URL}model.json`;
 const METADATA_URL = `${MODEL_BASE_URL}metadata.json`;
@@ -10,9 +9,7 @@ let modelPromise = loadModel();
 async function loadModel() {
   await tf.ready();
 
-  try {
-    await tf.setBackend("webgl");
-  } catch {}
+  try { await tf.setBackend("webgl"); } catch {}
 
   const [model, metadata] = await Promise.all([
     tf.loadLayersModel(MODEL_URL),
@@ -23,45 +20,10 @@ async function loadModel() {
 }
 
 let wikipediaDataset = null;
-
-async function loadWikipediaDatasetJSONL(path) {
-  try {
-    const url = chrome.runtime.getURL(path);
-    const res = await fetch(url);
-    const text = await res.text();
-
-    const lines = text.split("\n").filter(Boolean);
-
-    const dataset = [];
-
-    for (const line of lines) {
-      try {
-        const item = JSON.parse(line);
-
-        if (item.human_text && item.human_text.length > 50) {
-          dataset.push({ text: item.human_text, label: 0 });
-        }
-
-        if (item.ai_text && item.ai_text.length > 50) {
-          dataset.push({ text: item.ai_text, label: 1 });
-        }
-      } catch {}
-    }
-
-    console.log("Dataset:", dataset.length);
-    return dataset;
-
-  } catch (e) {
-    console.warn("Dataset failed:", e);
-    return [];
-  }
-}
-
 let imageClassified = {};
 let AIData = { NotAI: 0, AINeutral: 0, AIGenerated: 0, TotalScan: 0 };
 
 let lastUrl = location.href;
-
 let lastTextScanSignature = "";
 let textScanInFlight = false;
 
@@ -96,6 +58,38 @@ function observeUrlChange() {
   }, 300);
 }
 
+async function loadWikipediaDatasetJSONL(path) {
+  try {
+    const url = chrome.runtime.getURL(path);
+    const res = await fetch(url);
+    const text = await res.text();
+
+    const lines = text.split("\n").filter(Boolean);
+    const dataset = [];
+
+    for (const line of lines) {
+      try {
+        const item = JSON.parse(line);
+
+        if (item.human_text && item.human_text.length > 50) {
+          dataset.push({ text: item.human_text, label: 0 });
+        }
+
+        if (item.ai_text && item.ai_text.length > 50) {
+          dataset.push({ text: item.ai_text, label: 1 });
+        }
+      } catch {}
+    }
+
+    console.log("Dataset:", dataset.length);
+    return dataset;
+
+  } catch (e) {
+    console.warn("Dataset failed:", e);
+    return [];
+  }
+}
+
 function main() {
   chrome.storage.local.get("switchStatus", data => {
     if (data.switchStatus === true) {
@@ -106,58 +100,57 @@ function main() {
       chrome.storage.local.set({ AIDataCollected: AIData });
     }
   });
+}
 
-  function runML() {
-    let imgs = document.querySelectorAll(
-      ".crayons-article__cover, .crayons-article__main-image"
-    );
+function runML() {
+  let imgs = document.querySelectorAll(
+    ".crayons-article__cover, .crayons-article__main-image"
+  );
 
-    for (let i of imgs) {
-      const imgTag = i.querySelector("img");
-      if (!imgTag) continue;
+  for (let i of imgs) {
+    const imgTag = i.querySelector("img");
+    if (!imgTag) continue;
 
-      if (!(imgTag.src in imageClassified)) {
-        imageClassified[imgTag.src] = true;
-
-        iconAssigned(null, i); // loading state
-        imageClassificationScan(i);
-      }
+    if (!(imgTag.src in imageClassified)) {
+      imageClassified[imgTag.src] = true;
+      iconAssigned(null, i);
+      imageClassificationScan(i);
     }
   }
+}
 
-  async function imageClassificationScan(imgObj) {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = imgObj.querySelector("img").src;
+async function imageClassificationScan(imgObj) {
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.src = imgObj.querySelector("img").src;
 
-    await new Promise(r => (img.onload = r));
+  await new Promise(r => (img.onload = r));
 
-    try {
-      const { model, metadata } = await modelPromise;
+  try {
+    const { model, metadata } = await modelPromise;
 
-      const tensor = tf.browser
-        .fromPixels(img)
-        .resizeBilinear([224, 224])
-        .toFloat()
-        .div(255)
-        .expandDims();
+    const tensor = tf.browser
+      .fromPixels(img)
+      .resizeBilinear([224, 224])
+      .toFloat()
+      .div(255)
+      .expandDims();
 
-      let pred = model.predict(tensor);
-      const scores = await pred.data();
+    let pred = model.predict(tensor);
+    const scores = await pred.data();
 
-      tf.dispose([tensor, pred]);
+    tf.dispose([tensor, pred]);
 
-      const results = metadata.labels.map((l, i) => ({
-        label: l,
-        confidence: scores[i],
-      }));
+    const results = metadata.labels.map((l, i) => ({
+      label: l,
+      confidence: scores[i],
+    }));
 
-      results.sort((a, b) => b.confidence - a.confidence);
+    results.sort((a, b) => b.confidence - a.confidence);
 
-      iconAssigned(results, imgObj);
-    } catch (e) {
-      iconAssigned(null, imgObj);
-    }
+    iconAssigned(results, imgObj);
+  } catch {
+    iconAssigned(null, imgObj);
   }
 }
 
@@ -176,7 +169,6 @@ function iconAssigned(results, imgObj) {
   icon.style.width = "42px";
   icon.style.height = "42px";
   icon.style.zIndex = "9999";
-  icon.style.pointerEvents = "none";
 
   try {
     if (!results) {
@@ -188,13 +180,10 @@ function iconAssigned(results, imgObj) {
 
       if ((label === "AI" || label === "NotAI") && conf <= 60) {
         icon.src = chrome.runtime.getURL("Images/AINeutral.png");
-        AIData.AINeutral++;
       } else if (label === "AI") {
         icon.src = chrome.runtime.getURL("Images/AIGenerated.png");
-        AIData.AIGenerated++;
       } else {
         icon.src = chrome.runtime.getURL("Images/AIFree.png");
-        AIData.NotAI++;
       }
 
       chrome.storage.local.set({ AIDataCollected: AIData });
@@ -217,12 +206,106 @@ async function runArticleTextScan() {
 
   textScanInFlight = true;
 
-  const result = await detectAiGeneratedText(text);
+  const result = await detectGPTStyle(text);
 
-  console.log("🧠 TEXT AI:", result);
+  console.log("RESULT:", result);
 
   lastTextScanSignature = signature;
   textScanInFlight = false;
+}
+
+function getSentenceSafeChunks() {
+  const root =
+    document.getElementById("article-body") ||
+    document.querySelector(".crayons-article__body") ||
+    document.querySelector("article");
+
+  if (!root) return [];
+
+  const blocks = root.querySelectorAll("p, li, h1, h2, h3");
+
+  let chunks = [];
+
+  blocks.forEach(el => {
+    const text = normalizeWhitespace(el.innerText || "");
+    if (text.length < 80) return;
+
+    const sentences = splitSentences(text);
+
+    let buffer = "";
+
+    sentences.forEach(s => {
+      buffer += s.trim() + " ";
+
+      if (buffer.length > 180) {
+        chunks.push(buffer.trim());
+        buffer = "";
+      }
+    });
+
+    if (buffer.length > 0) {
+      chunks.push(buffer.trim());
+    }
+  });
+
+  return chunks;
+}
+
+/* Scoring */
+async function detectGPTStyle(text) {
+  const chunks = getSentenceSafeChunks();
+  if (!chunks.length) return { label: "Unknown", aiScore: 0 };
+
+  let scores = [];
+
+  for (let c of chunks) {
+    const f = extractAdvancedFeatures(c);
+    const score = computeGPTZeroScore(f);
+    scores.push(score);
+  }
+
+  const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+
+  return {
+    label:
+      avg > 80 ? "AI-generated" :
+      avg > 40 ? "Mixed" :
+      "Human-written",
+    aiScore: Number(avg.toFixed(2))
+  };
+}
+
+function extractAdvancedFeatures(text) {
+  const sentences = splitSentences(text);
+  const words = tokenizeWords(text);
+
+  const lengths = sentences.map(s => tokenizeWords(s).length);
+
+  const avgLen = mean(lengths);
+  const varLen = variance(lengths);
+
+  const diversity = new Set(words).size / (words.length || 1);
+  const repetition = 1 - diversity;
+
+  return { avgLen, varLen, repetition, diversity };
+}
+
+function computeGPTZeroScore(f) {
+  let burstiness = clamp(f.varLen / 50);
+  let repetition = clamp(f.repetition);
+  let diversity = clamp(1 - f.diversity);
+
+  let ai =
+    (1 - burstiness) * 0.4 +
+    repetition * 0.35 +
+    diversity * 0.25;
+
+  return clamp(ai) * 100;
+}
+
+/* Utilities */
+function clamp(x, min = 0, max = 1) {
+  return Math.max(min, Math.min(max, x));
 }
 
 function normalizeWhitespace(t) {
@@ -249,50 +332,5 @@ function mean(arr) {
 
 function variance(arr) {
   const m = mean(arr);
-  return mean(arr.map(x => (x - m) ** 2));
-}
-
-function extractTextFeatures(text) {
-  const sentences = splitSentences(text);
-  const words = tokenizeWords(text);
-
-  const lengths = sentences.map(s => tokenizeWords(s).length);
-
-  return {
-    avgSentenceLengthNorm: mean(lengths) / 28,
-    lowSentenceVarianceNorm: 1 - variance(lengths) / 180,
-    lowLexicalDiversityNorm: 1 - new Set(words).size / (words.length || 1),
-    repetitionNorm: 0,
-    aiPhraseDensityNorm: 0,
-    punctuationUniformityNorm: 0,
-    lowFirstPersonNorm: 1,
-  };
-}
-
-async function detectAiGeneratedText(text) {
-  const f = extractTextFeatures(text);
-
-  const x = tf.tensor2d([[
-    f.avgSentenceLengthNorm,
-    f.lowSentenceVarianceNorm,
-    f.lowLexicalDiversityNorm,
-    f.repetitionNorm,
-    f.aiPhraseDensityNorm,
-    f.punctuationUniformityNorm,
-    f.lowFirstPersonNorm,
-  ]]);
-
-  const w = tf.tensor2d([[0.45],[1.15],[1.10],[1.35],[1.10],[0.55],[0.85]]);
-  const b = tf.scalar(-3.1);
-
-  const prob = tf.sigmoid(x.matMul(w).add(b)).dataSync()[0];
-
-  const aiScore = prob * 100;
-
-  let label =
-    prob > 0.8 ? "Likely AI-generated" :
-    prob > 0.4 ? "Mixed" :
-    "Likely human-written";
-
-  return { label, aiScore };
+  return arr.reduce((acc, x) => acc + Math.pow(x - m, 2), 0) / (arr.length || 1);
 }
