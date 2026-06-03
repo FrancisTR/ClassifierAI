@@ -44,13 +44,15 @@
       </label>
     </header>
 
-    <main class="AIStatus py-4 px-8 mb-4">
+    <main class="AIStatus py-4 px-4 mb-4">
       <header>
-        <p id="TotalImageScan" class="text-4xl font-bold leading-tight">72%</p>
-        <p class="mb-4 text-sm text-slate-300 tracking-wide">Likely Human</p>
+        <p id="heroMetric" class="text-4xl font-bold leading-tight">0%</p>
+        <p id="articleResult" class="mb-4 text-sm text-slate-300 tracking-wide">
+          Open a DEV article
+        </p>
       </header>
 
-      <div class="mb-4">
+      <div id="chartContainer" class="mb-4 hidden">
         <canvas class="max-h-30" id="statsChart"></canvas>
       </div>
 
@@ -58,34 +60,34 @@
         <li
           class="flex items-center justify-between border-b-[rgba(255,255,255,0.15)] border-b py-4"
         >
-          <div class="flex gap-4 flex-row items-center">
+          <div class="flex gap-2 flex-row items-center">
             <img src="../Images/AIFree.png" width="35" />
             <p class="text-base text-slate-100">Human</p>
           </div>
 
-          <p id="NotAIStat" class="text-lg font-medium text-[#22c55e]">72%</p>
+          <p id="NotAIStat" class="text-lg font-medium text-[#22c55e]">0%</p>
         </li>
 
         <li
           class="flex items-center justify-between border-b-[rgba(255,255,255,0.15)] border-b py-4"
         >
-          <div class="flex gap-4 flex-row items-center">
+          <div class="flex gap-2 flex-row items-center">
             <img src="../Images/AINeutral.png" width="35" />
             <p class="text-base text-slate-100">Unsure</p>
           </div>
 
           <p id="AINeutralStat" class="text-lg font-medium text-[#facc15]">
-            18%
+            0%
           </p>
         </li>
 
         <li class="flex items-center justify-between py-4">
-          <div class="flex gap-4 flex-row items-center">
+          <div class="flex gap-2 flex-row items-center">
             <img src="../Images/AIGenerated.png" width="35" />
             <p class="text-base text-slate-100">AI Generated</p>
           </div>
 
-          <p id="AIGenStat" class="text-lg font-medium text-[#ef4444]">10%</p>
+          <p id="AIGenStat" class="text-lg font-medium text-[#ef4444]">0%</p>
         </li>
       </ul>
     </main>
