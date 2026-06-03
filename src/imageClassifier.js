@@ -32,7 +32,7 @@ let AIData = { NotAI: 0, AINeutral: 0, AIGenerated: 0, TotalScan: 0 };
 
 let lastUrl = location.href;
 
-/* -------------------- NEW: text scan state -------------------- */
+/* -------------------- text scan state (WIP) -------------------- */
 let lastTextScanSignature = "";
 let textScanInFlight = false;
 
@@ -456,10 +456,13 @@ async function detectAiGeneratedText(text) {
   let label = "Uncertain / mixed signal";
   let confidence = Math.abs(aiScore - 50) * 2;
 
-  if (aiProbability >= 0.62) {
+  if (aiProbability >= 0.80) {
     label = "Likely AI-generated";
     confidence = aiScore;
-  } else if (aiProbability <= 0.38) {
+  }else if (aiProbability < 0.80 && aiProbability >= 0.40) {
+    label = "Likely human-written with some AI influence";
+    confidence = humanScore;
+  } else if (aiProbability < 0.40) {
     label = "Likely human-written";
     confidence = humanScore;
   }
