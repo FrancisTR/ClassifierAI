@@ -444,6 +444,10 @@ async function runArticleTextScan() {
 
   console.log("FINAL RESULT:", result);
 
+  chrome.storage.local.set({
+    articleAnalysis: result,
+  });
+
   lastTextScanSignature = signature;
   textScanInFlight = false;
 }
