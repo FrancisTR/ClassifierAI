@@ -41,12 +41,10 @@ function renderChart(humanPercent, unsurePercent, aiPercent) {
   });
 }
 
-//Automatically update the stats on the popup html in real time
+// update stats automatically
 chrome.storage.onChanged.addListener(function (data, name) {
   if (
     name === "local" &&
-    data.AIDataCollected !== undefined &&
-    data.AIDataCollected.newValue !== undefined &&
     data.articleAnalysis !== undefined &&
     data.articleAnalysis.newValue !== undefined
   ) {
@@ -64,29 +62,27 @@ chrome.storage.onChanged.addListener(function (data, name) {
   }
 });
 
-//Save data for the popup html for the next time if they reopen the html
-chrome.storage.local
-  .get(["switchStatus", "AIDataCollected", "articleAnalysis"])
-  .then((data) => {
-    if (data.switchStatus !== undefined) {
-      // Set the checkbox to the saved value
-      AISwitch.checked = data.switchStatus;
-    }
+// save last stats
+chrome.storage.local.get(["switchStatus", "articleAnalysis"]).then((data) => {
+  if (data.switchStatus !== undefined) {
+    // Set the checkbox to the saved value
+    AISwitch.checked = data.switchStatus;
+  }
 
-    if (data.articleAnalysis !== undefined) {
-      const { aiScore, confidence, label } = data.articleAnalysis;
+  if (data.articleAnalysis !== undefined) {
+    const { aiScore, confidence, label } = data.articleAnalysis;
 
-      chartContainer.classList.remove("hidden");
+    chartContainer.classList.remove("hidden");
 
-      renderChart(confidence, 0, aiScore);
+    renderChart(confidence, 0, aiScore);
 
-      humanStat.textContent = `${confidence ?? 0}%`;
-      unsureStat.textContent = `0%`;
-      aiStat.textContent = `${aiScore ?? 0}%`;
-      heroMetric.textContent = `${confidence ?? 0}%`;
-      articleResult.textContent = `${label}`;
-    }
-  });
+    humanStat.textContent = `${confidence ?? 0}%`;
+    unsureStat.textContent = `0%`;
+    aiStat.textContent = `${aiScore ?? 0}%`;
+    heroMetric.textContent = `${confidence ?? 0}%`;
+    articleResult.textContent = `${label}`;
+  }
+});
 
 AISwitch.addEventListener("change", function () {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
