@@ -461,7 +461,6 @@ async function detectAiGeneratedText(text) {
     confidence = aiScore;
   }else if (aiProbability < 0.80 && aiProbability >= 0.40) {
     label = "Likely human-written with some AI influence";
-    confidence = humanScore;
   } else if (aiProbability < 0.40) {
     label = "Likely human-written";
     confidence = humanScore;
