@@ -1,72 +1,92 @@
 import Chart from "chart.js/auto";
-import { RESULT } from "./imageClassifier";
+const chartContainer = document.getElementById("chartContainer");
 const chartCanvas = document.getElementById("statsChart");
+const heroMetric = document.getElementById("heroMetric");
+const articleResult = document.getElementById("articleResult");
+const humanStat = document.getElementById("NotAIStat");
+const unsureStat = document.getElementById("AINeutralStat");
+const aiStat = document.getElementById("AIGenStat");
+const AISwitch = document.getElementById("AICheck");
+let chart = null;
 
-const chartData = {
-  labels: ["Human", "Unsure", "AI Generated"],
-  datasets: [
-    {
-      data: [72, 18, 10],
-      backgroundColor: ["#22c55e", "#facc15", "#ef4444"],
-      cutout: "70%",
-      borderWidth: 0,
-    },
-  ],
-};
-
-new Chart(chartCanvas, {
-  type: "doughnut",
-  data: chartData,
-  options: {
-    plugins: {
-      legend: {
-        display: false,
+function renderChart(humanPercent, unsurePercent, aiPercent) {
+  const chartData = {
+    labels: ["Human", "Unsure", "AI Generated"],
+    datasets: [
+      {
+        data: [humanPercent, unsurePercent, aiPercent],
+        backgroundColor: ["#22c55e", "#facc15", "#ef4444"],
+        cutout: "70%",
+        borderWidth: 0,
       },
+    ],
+  };
+
+  if (chart) {
+    chart.destroy();
+  }
+
+  chart = new Chart(chartCanvas, {
+    type: "doughnut",
+    data: chartData,
+    options: {
+      plugins: {
+        legend: {
+          display: false,
+        },
+      },
+      responsive: true,
+      maintainAspectRatio: false,
     },
-    responsive: true,
-    maintainAspectRatio: false,
-  },
-});
+  });
+}
 
 //Automatically update the stats on the popup html in real time
 chrome.storage.onChanged.addListener(function (data, name) {
   if (
     name === "local" &&
     data.AIDataCollected !== undefined &&
-    data.AIDataCollected.newValue !== undefined
+    data.AIDataCollected.newValue !== undefined &&
+    data.articleAnalysis !== undefined &&
+    data.articleAnalysis.newValue !== undefined
   ) {
-    const stats = data.AIDataCollected.newValue;
-    document.getElementById("NotAIStat").textContent = `${stats.NotAI ?? 0}%`;
-    document.getElementById("AINeutralStat").textContent =
-      `${stats.AINeutral ?? 0}%`;
-    document.getElementById("AIGenStat").textContent =
-      `${stats.AIGenerated ?? 0}%`;
-    document.getElementById("TotalImageScan").textContent =
-      stats.TotalScan ?? 0;
+    const { aiScore, confidence, label } = data.articleAnalysis.newValue;
+
+    chartContainer.classList.remove("hidden");
+
+    renderChart(confidence, 0, aiScore);
+
+    humanStat.textContent = `${confidence ?? 0}%`;
+    unsureStat.textContent = `0%`;
+    aiStat.textContent = `${aiScore ?? 0}%`;
+    heroMetric.textContent = `${confidence ?? 0}%`;
+    articleResult.textContent = `${label}`;
   }
 });
 
 //Save data for the popup html for the next time if they reopen the html
-chrome.storage.local.get(["switchStatus", "AIDataCollected"]).then((data) => {
-  if (data.switchStatus !== undefined) {
-    // Set the checkbox to the saved value
-    AISwitch.checked = data.switchStatus;
-  }
+chrome.storage.local
+  .get(["switchStatus", "AIDataCollected", "articleAnalysis"])
+  .then((data) => {
+    if (data.switchStatus !== undefined) {
+      // Set the checkbox to the saved value
+      AISwitch.checked = data.switchStatus;
+    }
 
-  //set the values to its tag content based on the saved values
-  if (data.AIDataCollected !== undefined) {
-    document.getElementById("NotAIStat").textContent =
-      data.AIDataCollected.NotAI ?? 0;
-    document.getElementById("AINeutralStat").textContent =
-      data.AIDataCollected.AINeutral ?? 0;
-    document.getElementById("AIGenStat").textContent =
-      data.AIDataCollected.AIGenerated ?? 0;
-    document.getElementById("TotalImageScan").textContent =
-      data.AIDataCollected.TotalScan ?? 0;
-  }
-});
+    if (data.articleAnalysis !== undefined) {
+      const { aiScore, confidence, label } = data.articleAnalysis;
 
-const AISwitch = document.getElementById("AICheck");
+      chartContainer.classList.remove("hidden");
+
+      renderChart(confidence, 0, aiScore);
+
+      humanStat.textContent = `${confidence ?? 0}%`;
+      unsureStat.textContent = `0%`;
+      aiStat.textContent = `${aiScore ?? 0}%`;
+      heroMetric.textContent = `${confidence ?? 0}%`;
+      articleResult.textContent = `${label}`;
+    }
+  });
 
 AISwitch.addEventListener("change", function () {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
