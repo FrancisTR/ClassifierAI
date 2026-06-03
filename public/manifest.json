@@ -40,7 +40,8 @@
         "Images/AIFree.png",
         "Images/AINeutral.png",
         "Images/AIGenerated.png",
-        "Images/loading.gif"
+        "Images/loading.gif",
+        "data/*.jsonl"
       ],
       "use_dynamic_url": true
     }
