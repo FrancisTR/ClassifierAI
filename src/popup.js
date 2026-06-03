@@ -1,5 +1,22 @@
+import Chart from "chart.js/auto";
+const chartCanvas = document.getElementById("statsChart");
+
+const chartData = {
+  labels: ["Human", "Unsure", "AI Generated"],
+  datasets: [
+    {
+      data: [72, 18, 10],
+    },
+  ],
+};
+
+new Chart(chartCanvas, {
+  type: "doughnut",
+  data: chartData,
+});
+
 //Automatically update the stats on the popup html in real time
-chrome.storage.onChanged.addListener(function(data, name){
+chrome.storage.onChanged.addListener(function (data, name) {
   if (
     name === "local" &&
     data.AIDataCollected !== undefined &&
@@ -9,7 +26,8 @@ chrome.storage.onChanged.addListener(function(data, name){
     document.getElementById("NotAIStat").textContent = stats.NotAI ?? 0;
     document.getElementById("AINeutralStat").textContent = stats.AINeutral ?? 0;
     document.getElementById("AIGenStat").textContent = stats.AIGenerated ?? 0;
-    document.getElementById("TotalImageScan").textContent = stats.TotalScan ?? 0;
+    document.getElementById("TotalImageScan").textContent =
+      stats.TotalScan ?? 0;
   }
 });
 
@@ -22,10 +40,14 @@ chrome.storage.local.get(["switchStatus", "AIDataCollected"]).then((data) => {
 
   //set the values to its tag content based on the saved values
   if (data.AIDataCollected !== undefined) {
-    document.getElementById("NotAIStat").textContent = data.AIDataCollected.NotAI ?? 0;
-    document.getElementById("AINeutralStat").textContent = data.AIDataCollected.AINeutral ?? 0;
-    document.getElementById("AIGenStat").textContent = data.AIDataCollected.AIGenerated ?? 0;
-    document.getElementById("TotalImageScan").textContent = data.AIDataCollected.TotalScan ?? 0;
+    document.getElementById("NotAIStat").textContent =
+      data.AIDataCollected.NotAI ?? 0;
+    document.getElementById("AINeutralStat").textContent =
+      data.AIDataCollected.AINeutral ?? 0;
+    document.getElementById("AIGenStat").textContent =
+      data.AIDataCollected.AIGenerated ?? 0;
+    document.getElementById("TotalImageScan").textContent =
+      data.AIDataCollected.TotalScan ?? 0;
   }
 });
 
@@ -39,7 +61,7 @@ AISwitch.addEventListener("change", function () {
         target: { tabId: tabs[0].id }, // Access tabId properly
         function: async (selectedValue) => {
           try {
-            chrome.storage.local.set({ switchStatus: selectedValue })
+            chrome.storage.local.set({ switchStatus: selectedValue });
           } catch (e) {
             console.log(e);
           }
