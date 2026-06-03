@@ -35,9 +35,11 @@ chrome.storage.onChanged.addListener(function (data, name) {
     data.AIDataCollected.newValue !== undefined
   ) {
     const stats = data.AIDataCollected.newValue;
-    document.getElementById("NotAIStat").textContent = stats.NotAI ?? 0;
-    document.getElementById("AINeutralStat").textContent = stats.AINeutral ?? 0;
-    document.getElementById("AIGenStat").textContent = stats.AIGenerated ?? 0;
+    document.getElementById("NotAIStat").textContent = `${stats.NotAI ?? 0}%`;
+    document.getElementById("AINeutralStat").textContent =
+      `${stats.AINeutral ?? 0}%`;
+    document.getElementById("AIGenStat").textContent =
+      `${stats.AIGenerated ?? 0}%`;
     document.getElementById("TotalImageScan").textContent =
       stats.TotalScan ?? 0;
   }
