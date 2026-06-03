@@ -1,4 +1,5 @@
 import Chart from "chart.js/auto";
+import { RESULT } from "./imageClassifier";
 const chartCanvas = document.getElementById("statsChart");
 
 const chartData = {
