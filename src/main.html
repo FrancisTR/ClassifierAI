@@ -36,7 +36,7 @@
       >
         <input type="checkbox" id="AICheck" class="peer sr-only" />
 
-        <h1 class="font-medium text-base tracking-wide">Classifier AI</h1>
+        <h1 class="font-medium text-base tracking-wide">ClassifierAI</h1>
 
         <div
           class="relative h-6 w-11 rounded-full bg-slate-500 transition-colors duration-200 peer-checked:bg-blue-600 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:duration-200 after:content-[''] peer-checked:after:translate-x-5"
@@ -44,42 +44,51 @@
       </label>
     </header>
 
-    <main class="AIStatus py-4 px-8 mb-4">
+    <main class="AIStatus py-4 px-4 mb-4">
       <header>
-        <p id="TotalImageScan" class="text-4xl font-bold leading-tight">0</p>
-        <p class="mb-4 text-sm text-slate-300 tracking-wide">Images Scanned</p>
+        <h2>AI Score</h2>
+        <p id="heroMetric" class="text-4xl font-bold leading-tight">0%</p>
+        <p id="articleResult" class="mb-4 text-sm text-slate-300 tracking-wide">
+          Open a DEV article
+        </p>
       </header>
+
+      <div id="chartContainer" class="mb-4 hidden">
+        <canvas class="max-h-30" id="statsChart"></canvas>
+      </div>
 
       <ul class="flex flex-col">
         <li
           class="flex items-center justify-between border-b-[rgba(255,255,255,0.15)] border-b py-4"
         >
-          <div class="flex gap-4 flex-row items-center">
+          <div class="flex gap-2 flex-row items-center">
             <img src="../Images/AIFree.png" width="35" />
             <p class="text-base text-slate-100">Human</p>
           </div>
 
-          <p id="NotAIStat" class="text-lg font-medium text-[#22c55e]">0</p>
+          <p id="NotAIStat" class="text-lg font-medium text-[#22c55e]">0%</p>
         </li>
 
         <li
           class="flex items-center justify-between border-b-[rgba(255,255,255,0.15)] border-b py-4"
         >
-          <div class="flex gap-4 flex-row items-center">
+          <div class="flex gap-2 flex-row items-center">
             <img src="../Images/AINeutral.png" width="35" />
-            <p class="text-base text-slate-100">Unsure</p>
+            <p class="text-base text-slate-100">Mixed</p>
           </div>
 
-          <p id="AINeutralStat" class="text-lg font-medium text-[#facc15]">0</p>
+          <p id="AINeutralStat" class="text-lg font-medium text-[#facc15]">
+            0%
+          </p>
         </li>
 
         <li class="flex items-center justify-between py-4">
-          <div class="flex gap-4 flex-row items-center">
+          <div class="flex gap-2 flex-row items-center">
             <img src="../Images/AIGenerated.png" width="35" />
             <p class="text-base text-slate-100">AI Generated</p>
           </div>
 
-          <p id="AIGenStat" class="text-lg font-medium text-[#ef4444]">0</p>
+          <p id="AIGenStat" class="text-lg font-medium text-[#ef4444]">0%</p>
         </li>
       </ul>
     </main>

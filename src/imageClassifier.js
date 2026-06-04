@@ -4,7 +4,8 @@ import * as tf from "@tensorflow/tfjs";
    SHARED / APP SETUP
 ========================================================= */
 
-const MODEL_BASE_URL = "https://teachablemachine.withgoogle.com/models/Z7sdOoyx6/";
+const MODEL_BASE_URL =
+  "https://teachablemachine.withgoogle.com/models/Z7sdOoyx6/";
 const MODEL_URL = `${MODEL_BASE_URL}model.json`;
 const METADATA_URL = `${MODEL_BASE_URL}metadata.json`;
 
@@ -13,11 +14,13 @@ let modelPromise = loadModel();
 async function loadModel() {
   await tf.ready();
 
-  try { await tf.setBackend("webgl"); } catch {}
+  try {
+    await tf.setBackend("webgl");
+  } catch {}
 
   const [model, metadata] = await Promise.all([
     tf.loadLayersModel(MODEL_URL),
-    fetch(METADATA_URL).then(r => r.json()),
+    fetch(METADATA_URL).then((r) => r.json()),
   ]);
 
   return { model, metadata };
@@ -27,17 +30,25 @@ let wikipediaDataset = null;
 let datasetStats = null;
 let imageClassified = {};
 let AIData = { NotAI: 0, AINeutral: 0, AIGenerated: 0, TotalScan: 0 };
+let articleData = {
+  label: "Open a DEV article",
+  averageAIScore: 0,
+  humanPercent: 0,
+  mixedPercent: 0,
+  aiPercent: 0,
+};
 
 let lastUrl = location.href;
 let lastTextScanSignature = "";
 let textScanInFlight = false;
 
 window.onload = async () => {
+  wikipediaDataset = await loadWikipediaDatasetJSONL("data/wikipedia.jsonl");
+  datasetStats = buildDatasetStats(wikipediaDataset);
+
   const targetNode = document.getElementById("page-content") || document.body;
 
   selfObserver(targetNode);
-  wikipediaDataset = await loadWikipediaDatasetJSONL("data/wikipedia.jsonl");
-  datasetStats = buildDatasetStats(wikipediaDataset);
 
   main();
   observeUrlChange();
@@ -73,7 +84,10 @@ async function loadWikipediaDatasetJSONL(path) {
         const item = JSON.parse(line);
 
         if (item.human_text && item.human_text.length > 50) {
-          dataset.push({ text: normalizeWhitespace(item.human_text), label: 0 });
+          dataset.push({
+            text: normalizeWhitespace(item.human_text),
+            label: 0,
+          });
         }
 
         if (item.ai_text && item.ai_text.length > 50) {
@@ -96,38 +110,36 @@ function buildDatasetStats(dataset) {
     humanMedian: 950,
     aiMedian: 850,
     humanLengths: [],
-    aiLengths: []
+    aiLengths: [],
   };
 
   if (!dataset || !dataset.length) return fallback;
 
   const humanLengths = dataset
-    .filter(d => d.label === 0)
-    .map(d => d.text.length)
+    .filter((d) => d.label === 0)
+    .map((d) => d.text.length)
     .sort((a, b) => a - b);
 
   const aiLengths = dataset
-    .filter(d => d.label === 1)
-    .map(d => d.text.length)
+    .filter((d) => d.label === 1)
+    .map((d) => d.text.length)
     .sort((a, b) => a - b);
 
-  const allLengths = dataset
-    .map(d => d.text.length)
-    .sort((a, b) => a - b);
+  const allLengths = dataset.map((d) => d.text.length).sort((a, b) => a - b);
 
   return {
-    allMedian: quantileSorted(allLengths, 0.50) || fallback.allMedian,
+    allMedian: quantileSorted(allLengths, 0.5) || fallback.allMedian,
     allP25: quantileSorted(allLengths, 0.25) || fallback.allP25,
     allP75: quantileSorted(allLengths, 0.75) || fallback.allP75,
-    humanMedian: quantileSorted(humanLengths, 0.50) || fallback.humanMedian,
-    aiMedian: quantileSorted(aiLengths, 0.50) || fallback.aiMedian,
+    humanMedian: quantileSorted(humanLengths, 0.5) || fallback.humanMedian,
+    aiMedian: quantileSorted(aiLengths, 0.5) || fallback.aiMedian,
     humanLengths,
-    aiLengths
+    aiLengths,
   };
 }
 
 function main() {
-  chrome.storage.local.get("switchStatus", data => {
+  chrome.storage.local.get("switchStatus", (data) => {
     if (data.switchStatus === true) {
       /* Cover image scan */
       runML();
@@ -136,20 +148,20 @@ function main() {
       runArticleTextScan();
     } else {
       AIData = { NotAI: 0, AINeutral: 0, AIGenerated: 0, TotalScan: 0 };
-      chrome.storage.local.set({ AIDataCollected: AIData });
+      articleData = {
+        label: "Open a DEV article",
+        averageAIScore: 0,
+        humanPercent: 0,
+        mixedPercent: 0,
+        aiPercent: 0,
+      };
+      chrome.storage.local.set({
+        AIDataCollected: AIData,
+        articleAnalysis: articleData,
+      });
     }
   });
 }
-
-
-
-
-
-
-
-
-
-
 
 /* =========================================================
    COVER IMAGE SCANNING
@@ -159,7 +171,7 @@ function main() {
 
 function runML() {
   let imgs = document.querySelectorAll(
-    ".crayons-article__cover, .crayons-article__main-image"
+    ".crayons-article__cover, .crayons-article__main-image",
   );
 
   for (let i of imgs) {
@@ -179,7 +191,7 @@ async function imageClassificationScan(imgObj) {
   img.crossOrigin = "anonymous";
   img.src = imgObj.querySelector("img").src;
 
-  await new Promise(r => (img.onload = r));
+  await new Promise((r) => (img.onload = r));
 
   try {
     const { model, metadata } = await modelPromise;
@@ -250,15 +262,6 @@ function iconAssigned(results, imgObj) {
   imgObj.appendChild(icon);
 }
 
-
-
-
-
-
-
-
-
-
 /* =========================================================
    ARTICLE SCANNING
    - Responsible for extracting article text
@@ -277,7 +280,7 @@ function getCleanArticleText() {
   const elements = root.querySelectorAll("h1, h2, h3, h4, p, li");
   let textParts = [];
 
-  elements.forEach(el => {
+  elements.forEach((el) => {
     const tag = el.tagName.toLowerCase();
     const text = normalizeWhitespace(el.innerText || "");
     if (!text) return;
@@ -302,11 +305,11 @@ function splitTextIntoDatasetLengthChunks(text) {
 
   const targetLen = getTargetChunkLength();
   const minLen = Math.max(250, Math.floor(targetLen * 0.75));
-  const maxLen = Math.max(minLen + 100, Math.ceil(targetLen * 1.20));
+  const maxLen = Math.max(minLen + 100, Math.ceil(targetLen * 1.2));
 
   const blocks = text
     .split(/\n{2,}/)
-    .map(x => x.trim())
+    .map((x) => x.trim())
     .filter(Boolean);
 
   if (!blocks.length) return [];
@@ -320,13 +323,13 @@ function splitTextIntoDatasetLengthChunks(text) {
         block,
         targetLen,
         minLen,
-        maxLen
+        maxLen,
       );
 
       for (const piece of splitBlocks) {
         if (!buffer) {
           buffer = piece;
-        } else if ((buffer.length + 2 + piece.length) <= maxLen) {
+        } else if (buffer.length + 2 + piece.length <= maxLen) {
           buffer += "\n\n" + piece;
         } else {
           if (buffer.trim()) chunks.push(buffer.trim());
@@ -362,13 +365,13 @@ function getTargetChunkLength() {
   return clampNumber(
     Math.round(datasetStats.allMedian || 900),
     Math.max(300, datasetStats.allP25 || 500),
-    Math.max(700, datasetStats.allP75 || 1400)
+    Math.max(700, datasetStats.allP75 || 1400),
   );
 }
 
 function splitLongBlockAtSentenceBoundaries(block, targetLen, minLen, maxLen) {
   const sentences = splitSentences(block)
-    .map(s => normalizeWhitespace(s))
+    .map((s) => normalizeWhitespace(s))
     .filter(Boolean);
 
   if (!sentences.length) return [block];
@@ -382,7 +385,7 @@ function splitLongBlockAtSentenceBoundaries(block, targetLen, minLen, maxLen) {
       continue;
     }
 
-    if ((buffer.length + 1 + sentence.length) <= maxLen) {
+    if (buffer.length + 1 + sentence.length <= maxLen) {
       buffer += " " + sentence;
     } else {
       pieces.push(buffer.trim());
@@ -400,7 +403,7 @@ function splitLongBlockAtSentenceBoundaries(block, targetLen, minLen, maxLen) {
     }
 
     const last = merged[merged.length - 1];
-    if (last.length < minLen && (last.length + 1 + piece.length) <= maxLen) {
+    if (last.length < minLen && last.length + 1 + piece.length <= maxLen) {
       merged[merged.length - 1] = last + " " + piece;
     } else {
       merged.push(piece);
@@ -422,7 +425,7 @@ function rebalanceChunkLengths(chunks, minLen, maxLen) {
     if (
       current.length < minLen &&
       i < chunks.length - 1 &&
-      (current.length + 2 + chunks[i + 1].length) <= maxLen
+      current.length + 2 + chunks[i + 1].length <= maxLen
     ) {
       output.push((current + "\n\n" + chunks[i + 1]).trim());
       i += 2;
@@ -459,6 +462,10 @@ async function runArticleTextScan() {
 
   console.log("FINAL RESULT:", result);
 
+  chrome.storage.local.set({
+    articleAnalysis: result,
+  });
+
   lastTextScanSignature = signature;
   textScanInFlight = false;
 }
@@ -468,13 +475,27 @@ async function runArticleTextScan() {
 ============================ */
 
 async function detectGPTStyle(text) {
+  console.log("Dataset:", wikipediaDataset?.length);
+
   if (!text || !wikipediaDataset || wikipediaDataset.length < 10) {
-    return { label: "Unknown", aiScore: 0 };
+    return {
+      label: "Unknown",
+      averageAIScore: 0,
+      humanPercent: 0,
+      mixedPercent: 0,
+      aiPercent: 0,
+    };
   }
 
   const chunks = splitTextIntoDatasetLengthChunks(text);
   if (!chunks.length) {
-    return { label: "Unknown", aiScore: 0 };
+    return {
+      label: "Unknown",
+      averageAIScore: 0,
+      humanPercent: 0,
+      mixedPercent: 0,
+      aiPercent: 0,
+    };
   }
 
   let humanCount = 0;
@@ -496,7 +517,7 @@ async function detectGPTStyle(text) {
     const datasetScore = compareWithDataset(chunk);
     const heuristicScore = computeHeuristicScore(chunk);
 
-    let score = datasetScore * 0.80 + heuristicScore * 0.20;
+    let score = datasetScore * 0.8 + heuristicScore * 0.2;
 
     score = 50 + (score - 50) * 1.6;
     score = clamp(score, 0, 100);
@@ -549,7 +570,10 @@ async function detectGPTStyle(text) {
 
   return {
     label: finalLabel,
-    aiScore: Number(avgScore.toFixed(2))
+    averageAIScore: Number(avgScore.toFixed(2)),
+    humanPercent: Number(humanPercent.toFixed(2)),
+    mixedPercent: Number(mixedPercent.toFixed(2)),
+    aiPercent: Number(aiPercent.toFixed(2)),
   };
 }
 
@@ -591,21 +615,21 @@ function compareWithDataset(text) {
 function getLengthMatchedSamples(label, targetLength, limit = 24) {
   if (!wikipediaDataset || !wikipediaDataset.length) return [];
 
-  const pool = wikipediaDataset.filter(item => item.label === label);
+  const pool = wikipediaDataset.filter((item) => item.label === label);
   if (!pool.length) return [];
 
-  const tolerances = [0.12, 0.20, 0.30, 0.45, 0.65];
+  const tolerances = [0.12, 0.2, 0.3, 0.45, 0.65];
   let matches = [];
 
   for (const tolerance of tolerances) {
     const delta = Math.max(60, Math.round(targetLength * tolerance));
 
     matches = pool
-      .filter(item => Math.abs(item.text.length - targetLength) <= delta)
+      .filter((item) => Math.abs(item.text.length - targetLength) <= delta)
       .sort(
         (a, b) =>
           Math.abs(a.text.length - targetLength) -
-          Math.abs(b.text.length - targetLength)
+          Math.abs(b.text.length - targetLength),
       );
 
     if (matches.length >= limit) {
@@ -618,7 +642,7 @@ function getLengthMatchedSamples(label, targetLength, limit = 24) {
     .sort(
       (a, b) =>
         Math.abs(a.text.length - targetLength) -
-        Math.abs(b.text.length - targetLength)
+        Math.abs(b.text.length - targetLength),
     )
     .slice(0, limit);
 }
@@ -663,14 +687,16 @@ function computeHeuristicScore(text) {
   const diversity = new Set(words).size / (words.length || 1);
   const repetition = 1 - diversity;
 
-  const lengths = sentences.map(s => tokenizeWords(s).length);
+  const lengths = sentences.map((s) => tokenizeWords(s).length);
   const varLen = variance(lengths);
 
-  return clamp(
-    (1 - clamp(varLen / 60)) * 0.5 +
-    clamp(repetition) * 0.25 +
-    clamp(1 - diversity) * 0.25
-  ) * 100;
+  return (
+    clamp(
+      (1 - clamp(varLen / 60)) * 0.5 +
+        clamp(repetition) * 0.25 +
+        clamp(1 - diversity) * 0.25,
+    ) * 100
+  );
 }
 
 /* =========================================================
@@ -693,7 +719,7 @@ function textToVector(text) {
   const words = tokenizeWords(text);
   const freq = {};
 
-  words.forEach(w => {
+  words.forEach((w) => {
     freq[w] = (freq[w] || 0) + 1;
   });
 
@@ -707,7 +733,7 @@ function cosineSimilarity(a, b) {
 
   const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
 
-  keys.forEach(k => {
+  keys.forEach((k) => {
     const x = a[k] || 0;
     const y = b[k] || 0;
     dot += x * y;
@@ -744,5 +770,7 @@ function mean(arr) {
 
 function variance(arr) {
   const m = mean(arr);
-  return arr.reduce((acc, x) => acc + Math.pow(x - m, 2), 0) / (arr.length || 1);
+  return (
+    arr.reduce((acc, x) => acc + Math.pow(x - m, 2), 0) / (arr.length || 1)
+  );
 }
