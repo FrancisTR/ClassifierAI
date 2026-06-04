@@ -30,17 +30,25 @@ let wikipediaDataset = null;
 let datasetStats = null;
 let imageClassified = {};
 let AIData = { NotAI: 0, AINeutral: 0, AIGenerated: 0, TotalScan: 0 };
+let articleData = {
+  label: "Open a DEV article",
+  averageAIScore: 0,
+  humanPercent: 0,
+  mixedPercent: 0,
+  aiPercent: 0,
+};
 
 let lastUrl = location.href;
 let lastTextScanSignature = "";
 let textScanInFlight = false;
 
 window.onload = async () => {
+  wikipediaDataset = await loadWikipediaDatasetJSONL("data/wikipedia.jsonl");
+  datasetStats = buildDatasetStats(wikipediaDataset);
+
   const targetNode = document.getElementById("page-content") || document.body;
 
   selfObserver(targetNode);
-  wikipediaDataset = await loadWikipediaDatasetJSONL("data/wikipedia.jsonl");
-  datasetStats = buildDatasetStats(wikipediaDataset);
 
   main();
   observeUrlChange();
@@ -140,7 +148,17 @@ function main() {
       runArticleTextScan();
     } else {
       AIData = { NotAI: 0, AINeutral: 0, AIGenerated: 0, TotalScan: 0 };
-      chrome.storage.local.set({ AIDataCollected: AIData });
+      articleData = {
+        label: "Open a DEV article",
+        averageAIScore: 0,
+        humanPercent: 0,
+        mixedPercent: 0,
+        aiPercent: 0,
+      };
+      chrome.storage.local.set({
+        AIDataCollected: AIData,
+        articleAnalysis: articleData,
+      });
     }
   });
 }
@@ -457,13 +475,27 @@ async function runArticleTextScan() {
 ============================ */
 
 async function detectGPTStyle(text) {
+  console.log("Dataset:", wikipediaDataset?.length);
+
   if (!text || !wikipediaDataset || wikipediaDataset.length < 10) {
-    return { label: "Unknown", aiScore: 0 };
+    return {
+      label: "Unknown",
+      averageAIScore: 0,
+      humanPercent: 0,
+      mixedPercent: 0,
+      aiPercent: 0,
+    };
   }
 
   const chunks = splitTextIntoDatasetLengthChunks(text);
   if (!chunks.length) {
-    return { label: "Unknown", aiScore: 0 };
+    return {
+      label: "Unknown",
+      averageAIScore: 0,
+      humanPercent: 0,
+      mixedPercent: 0,
+      aiPercent: 0,
+    };
   }
 
   let humanCount = 0;
@@ -538,7 +570,10 @@ async function detectGPTStyle(text) {
 
   return {
     label: finalLabel,
-    aiScore: Number(avgScore.toFixed(2)),
+    averageAIScore: Number(avgScore.toFixed(2)),
+    humanPercent: Number(humanPercent.toFixed(2)),
+    mixedPercent: Number(mixedPercent.toFixed(2)),
+    aiPercent: Number(aiPercent.toFixed(2)),
   };
 }
 

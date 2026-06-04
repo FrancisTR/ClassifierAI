@@ -4,17 +4,23 @@ const chartCanvas = document.getElementById("statsChart");
 const heroMetric = document.getElementById("heroMetric");
 const articleResult = document.getElementById("articleResult");
 const humanStat = document.getElementById("NotAIStat");
-const unsureStat = document.getElementById("AINeutralStat");
+const mixedStat = document.getElementById("AINeutralStat");
 const aiStat = document.getElementById("AIGenStat");
 const AISwitch = document.getElementById("AICheck");
 let chart = null;
 
-function renderChart(humanPercent, unsurePercent, aiPercent) {
+function renderChart(humanPercent, mixedPercent, aiPercent) {
+  if (humanPercent === 0 && mixedPercent === 0 && aiPercent === 0) {
+    chartContainer.classList.add("hidden");
+  } else {
+    chartContainer.classList.remove("hidden");
+  }
+
   const chartData = {
-    labels: ["Human", "Unsure", "AI Generated"],
+    labels: ["Human", "Mixed", "AI Generated"],
     datasets: [
       {
-        data: [humanPercent, unsurePercent, aiPercent],
+        data: [humanPercent, mixedPercent, aiPercent],
         backgroundColor: ["#22c55e", "#facc15", "#ef4444"],
         cutout: "70%",
         borderWidth: 0,
@@ -41,6 +47,18 @@ function renderChart(humanPercent, unsurePercent, aiPercent) {
   });
 }
 
+function showResults(data) {
+  const { label, averageAIScore, humanPercent, mixedPercent, aiPercent } = data;
+
+  renderChart(humanPercent, mixedPercent, aiPercent);
+
+  humanStat.textContent = `${humanPercent}%`;
+  mixedStat.textContent = `${mixedPercent}%`;
+  aiStat.textContent = `${aiPercent}%`;
+  heroMetric.textContent = `${averageAIScore}%`;
+  articleResult.textContent = label;
+}
+
 // update stats automatically
 chrome.storage.onChanged.addListener(function (data, name) {
   if (
@@ -48,39 +66,18 @@ chrome.storage.onChanged.addListener(function (data, name) {
     data.articleAnalysis !== undefined &&
     data.articleAnalysis.newValue !== undefined
   ) {
-    const { aiScore, confidence, label } = data.articleAnalysis.newValue;
-
-    chartContainer.classList.remove("hidden");
-
-    renderChart(confidence, 0, aiScore);
-
-    humanStat.textContent = `${confidence ?? 0}%`;
-    unsureStat.textContent = `0%`;
-    aiStat.textContent = `${aiScore ?? 0}%`;
-    heroMetric.textContent = `${confidence ?? 0}%`;
-    articleResult.textContent = `${label}`;
+    showResults(data.articleAnalysis.newValue);
   }
 });
 
 // save last stats
 chrome.storage.local.get(["switchStatus", "articleAnalysis"]).then((data) => {
   if (data.switchStatus !== undefined) {
-    // Set the checkbox to the saved value
     AISwitch.checked = data.switchStatus;
   }
 
   if (data.articleAnalysis !== undefined) {
-    const { aiScore, confidence, label } = data.articleAnalysis;
-
-    chartContainer.classList.remove("hidden");
-
-    renderChart(confidence, 0, aiScore);
-
-    humanStat.textContent = `${confidence ?? 0}%`;
-    unsureStat.textContent = `0%`;
-    aiStat.textContent = `${aiScore ?? 0}%`;
-    heroMetric.textContent = `${confidence ?? 0}%`;
-    articleResult.textContent = `${label}`;
+    showResults(data.articleAnalysis);
   }
 });
 
