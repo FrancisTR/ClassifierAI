@@ -5,7 +5,7 @@ import * as tf from "@tensorflow/tfjs";
 ========================================================= */
 
 const IMAGE_MODEL_BASE_URL =
-  "https://teachablemachine.withgoogle.com/models/Z7sdOoyx6/";
+  "https://teachablemachine.withgoogle.com/models/ZIGMmrziY/";
 
 const IMAGE_MODEL_URL = `${IMAGE_MODEL_BASE_URL}model.json`;
 const IMAGE_METADATA_URL = `${IMAGE_MODEL_BASE_URL}metadata.json`;
