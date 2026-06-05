@@ -23,7 +23,7 @@ The model is trained using [Teachable Machine](https://teachablemachine.withgoog
 **Extension Tooling:** [<img alt="Vite" src="https://img.shields.io/badge/-Vite-0F172A?style=flat-square&logo=vite&logoColor=646CFF" />](https://vitejs.dev/)
 [<img alt="CRXJS" src="https://img.shields.io/badge/-CRXJS-0F172A?style=flat-square&logo=googlechrome&logoColor=4285F4" />](https://crxjs.dev/)
 
-## Installation
+## How to Run
 
 1. Clone or download the repository and navigate to the project directory.
 
@@ -51,7 +51,11 @@ The model is trained using [Teachable Machine](https://teachablemachine.withgoog
 
 7. The extension is now installed and ready to use.
 
-## Demonstration
+## Demo
+
+### Installation
+
+### Usage
 
 ## Contributing
 
