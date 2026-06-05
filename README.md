@@ -51,4 +51,10 @@ The model is trained using [Teachable Machine](https://teachablemachine.withgoog
 
 7. The extension is now installed and ready to use.
 
-## Demonstration (Coming Soon)
+## Demonstration
+
+## Contributing
+
+ClassifierAI is an open-source project, and contributions of all sizes are welcome.
+
+For contribution guidelines, development setup, and pull request workflow, please see [CONTRIBUTING.md](./CONTRIBUTING.md).
