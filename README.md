@@ -4,7 +4,7 @@
 
 A Google Chrome Extension that integrates Machine Learning to determine if the image and the dev.to article, that the user is viewing, is AI-Generated. This uses Tensorflow.js to perform Image Classification and Text Classification.
 
-The model is trained using [Teachable Machine](https://teachablemachine.withgoogle.com/) by Google where it is train from 1832 images, that consists of AI and Non-AI images, using the following settings:
+The model is trained using [Teachable Machine](https://teachablemachine.withgoogle.com/) by Google where it is train from 866 images, that consists of AI and Non-AI images, using the following settings:
 
 - Epochs: 30
 - Batch Size: 16
