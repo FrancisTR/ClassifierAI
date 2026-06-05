@@ -55,7 +55,31 @@ The model is trained using [Teachable Machine](https://teachablemachine.withgoog
 
 ### Installation
 
+1. Copy HTTPS link:
+
+   ![Copy HTTPS](INSERT_LINK_HERE)
+
+2. Open a terminal and clone the repo:
+
+   ![Clone Repo](INSERT_LINK_HERE)
+
+3. Install dependencies and run build:
+
+   ![Dependencies and Build](INSERT_LINK_HERE)
+
+4. Open `chrome://extensions/` and unpack `dist/`:
+
+   ![Install extension](INSERT_LINK_HERE)
+
 ### Usage
+
+1. Open [dev.to](https://dev.to/) and toggle ClassifierAI:
+
+   ![Toggle ClassifierAI](INSERT_LINK_HERE)
+
+2. Click a DEV article and see results:
+
+   ![Results](INSERT_LINK_HERE)
 
 ## Contributing
 
