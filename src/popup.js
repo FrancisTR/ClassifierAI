@@ -4,33 +4,30 @@ const chartCanvas = document.getElementById("statsChart");
 const heroMetric = document.getElementById("heroMetric");
 const articleResult = document.getElementById("articleResult");
 const humanStat = document.getElementById("NotAIStat");
-const mixedStat = document.getElementById("AINeutralStat");
 const aiStat = document.getElementById("AIGenStat");
 const AISwitch = document.getElementById("AICheck");
 let chart = null;
 
-function renderChart(humanPercent, mixedPercent, aiPercent) {
-  if (humanPercent === 0 && mixedPercent === 0 && aiPercent === 0) {
+function renderChart(humanPercent, aiPercent) {
+  if (humanPercent === 0 && aiPercent === 0) {
     chartContainer.classList.add("hidden");
   } else {
     chartContainer.classList.remove("hidden");
   }
 
   const chartData = {
-    labels: ["Human", "Mixed", "AI Generated"],
+    labels: ["Human", "AI Generated"],
     datasets: [
       {
-        data: [humanPercent, mixedPercent, aiPercent],
-        backgroundColor: ["#22c55e", "#facc15", "#ef4444"],
+        data: [humanPercent, aiPercent],
+        backgroundColor: ["#22c55e", "#ef4444"],
         cutout: "70%",
         borderWidth: 0,
       },
     ],
   };
 
-  if (chart) {
-    chart.destroy();
-  }
+  if (chart) chart.destroy();
 
   chart = new Chart(chartCanvas, {
     type: "doughnut",
@@ -48,18 +45,20 @@ function renderChart(humanPercent, mixedPercent, aiPercent) {
 }
 
 function showResults(data) {
-  const { label, averageAIScore, humanPercent, mixedPercent, aiPercent } = data;
+  const { label, averageAIScore, humanPercent, aiPercent } = data;
 
-  renderChart(humanPercent, mixedPercent, aiPercent);
+  renderChart(humanPercent, aiPercent);
 
   humanStat.textContent = `${humanPercent}%`;
-  mixedStat.textContent = `${mixedPercent}%`;
   aiStat.textContent = `${aiPercent}%`;
+
+  // HERO = HUMAN SCORE
   heroMetric.textContent = `${averageAIScore}%`;
+
+  // Label stays same (AI / Mixed / Human)
   articleResult.textContent = label;
 }
 
-// update stats automatically
 chrome.storage.onChanged.addListener(function (data, name) {
   if (
     name === "local" &&
@@ -70,7 +69,6 @@ chrome.storage.onChanged.addListener(function (data, name) {
   }
 });
 
-// save last stats
 chrome.storage.local.get(["switchStatus", "articleAnalysis"]).then((data) => {
   if (data.switchStatus !== undefined) {
     AISwitch.checked = data.switchStatus;
@@ -84,20 +82,13 @@ chrome.storage.local.get(["switchStatus", "articleAnalysis"]).then((data) => {
 AISwitch.addEventListener("change", function () {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     if (tabs.length > 0) {
-      // Ensure we have a valid tab
       chrome.scripting.executeScript({
-        target: { tabId: tabs[0].id }, // Access tabId properly
-        function: async (selectedValue) => {
-          try {
-            chrome.storage.local.set({ switchStatus: selectedValue });
-          } catch (e) {
-            console.log(e);
-          }
+        target: { tabId: tabs[0].id },
+        function: (selectedValue) => {
+          chrome.storage.local.set({ switchStatus: selectedValue });
         },
-        args: [AISwitch.checked], // Pass the checkbox boolean
+        args: [AISwitch.checked],
       });
-    } else {
-      console.error("No active tab");
     }
   });
 });
