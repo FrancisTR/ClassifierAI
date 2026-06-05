@@ -58,3 +58,7 @@ The model is trained using [Teachable Machine](https://teachablemachine.withgoog
 ClassifierAI is an open-source project, and contributions of all sizes are welcome.
 
 For contribution guidelines, development setup, and pull request workflow, please see [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE.md](./LICENSE) for details.
