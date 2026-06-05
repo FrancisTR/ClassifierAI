@@ -12,13 +12,18 @@ The model is trained using [Teachable Machine](https://teachablemachine.withgoog
 
 ## Technologies Used
 
-- HTML <img width="3%" src="https://github.com/FrancisTR/FrancisTR.github.io/assets/123771828/6e8fc77f-c210-45fe-abd4-004b65d604f5" />
-- CSS <img width="3%" src="https://github.com/FrancisTR/FrancisTR.github.io/assets/123771828/bb94c4f3-3200-4fd8-b11b-4985c3931909" />
-- JavaScript <img width="3%" src="https://github.com/FrancisTR/FrancisTR.github.io/assets/123771828/2b5d47bd-8414-4ef5-a390-0e54903c17a6" />
-- Bootstrap <img width="3%" src="https://github.com/FrancisTR/FrancisTR/assets/123771828/3ad2e079-89ac-4e91-9daa-61b565ead8c1" />
-- ml5.js <img width="3%" src="https://github.com/user-attachments/assets/494b42e6-aaad-42af-9680-366d4f582baa" />
+**Core Tech:** [<img alt="JavaScript" src="https://img.shields.io/badge/-JavaScript-0F172A?style=flat-square&logo=javascript&logoColor=F7DF1E" />](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[<img alt="HTML5" src="https://img.shields.io/badge/-HTML5-0F172A?style=flat-square&logo=html5&logoColor=E34F26" />](https://developer.mozilla.org/en-US/docs/Web/HTML)
+[<img alt="CSS3" src="https://img.shields.io/badge/-CSS3-0F172A?style=flat-square&logo=css&logoColor=1572B6" />](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[<img alt="Tailwind CSS" src="https://img.shields.io/badge/-Tailwind%20CSS-0F172A?style=flat-square&logo=tailwindcss&logoColor=38BDF8" />](https://tailwindcss.com/)
 
-## Installation
+**Content Analysis:** [<img alt="TensorFlow.js" src="https://img.shields.io/badge/-TensorFlow.js-0F172A?style=flat-square&logo=tensorflow&logoColor=FF6F00" />](https://www.tensorflow.org/js)
+[<img alt="Chart.js" src="https://img.shields.io/badge/-Chart.js-0F172A?style=flat-square&logo=chartdotjs&logoColor=FF6384" />](https://www.chartjs.org/)
+
+**Extension Tooling:** [<img alt="Vite" src="https://img.shields.io/badge/-Vite-0F172A?style=flat-square&logo=vite&logoColor=646CFF" />](https://vitejs.dev/)
+[<img alt="CRXJS" src="https://img.shields.io/badge/-CRXJS-0F172A?style=flat-square&logo=googlechrome&logoColor=4285F4" />](https://crxjs.dev/)
+
+## How to Run
 
 1. Clone or download the repository and navigate to the project directory.
 
@@ -46,4 +51,18 @@ The model is trained using [Teachable Machine](https://teachablemachine.withgoog
 
 7. The extension is now installed and ready to use.
 
-## Demonstration (Coming Soon)
+## Demo
+
+### Installation
+
+### Usage
+
+## Contributing
+
+ClassifierAI is an open-source project, and contributions of all sizes are welcome.
+
+For contribution guidelines, development setup, and pull request workflow, please see [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE.md](./LICENSE) for details.
