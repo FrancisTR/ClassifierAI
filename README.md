@@ -55,31 +55,23 @@ The model is trained using [Teachable Machine](https://teachablemachine.withgoog
 
 ### Installation
 
-1. Copy HTTPS link:
+1. Open a terminal and clone the repo:
 
-   ![Copy HTTPS](INSERT_LINK_HERE)
-
-2. Open a terminal and clone the repo:
-
-   ![Clone Repo](INSERT_LINK_HERE)
+`git clone https://github.com/FrancisTR/ClassifierAI.git`
 
 3. Install dependencies and run build:
 
-   ![Dependencies and Build](INSERT_LINK_HERE)
+`npm install`
 
-4. Open `chrome://extensions/` and unpack `dist/`:
+`npm run build`
 
-   ![Install extension](INSERT_LINK_HERE)
+5. Ensure you enable Developer Mode! Then, open `chrome://extensions/` and unpack `dist/`.
 
 ### Usage
 
 1. Open [dev.to](https://dev.to/) and toggle ClassifierAI:
 
-   ![Toggle ClassifierAI](INSERT_LINK_HERE)
-
-2. Click a DEV article and see results:
-
-   ![Results](INSERT_LINK_HERE)
+2. Click a DEV article and see results.
 
 ## Contributing
 
