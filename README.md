@@ -10,6 +10,8 @@ The model is trained using [Teachable Machine](https://teachablemachine.withgoog
 - Batch Size: 16
 - Learning Rate: 0.0001
 
+**This Chrome Extension is compatible with dev.to. More information on the Chrome Extension and how it is built: https://dev.to/devengers/two-devs-and-a-copilot-created-classifierai-a-prototype-chrome-extension-that-automatically-4fge**
+
 ## Technologies Used
 
 **Core Tech:** [<img alt="JavaScript" src="https://img.shields.io/badge/-JavaScript-0F172A?style=flat-square&logo=javascript&logoColor=F7DF1E" />](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
