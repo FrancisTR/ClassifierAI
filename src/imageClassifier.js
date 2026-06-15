@@ -36,16 +36,22 @@ let wikipediaDataset = null; // Wikipedia dataset for text classification (Place
 let imageClassified = {}; // Uses Teachable Machines
 
 let lastUrl = location.href;
-let lastTextScanSignature = "";
-let textScanInFlight = false;
+
+let idfCache = {};
 
 /* =========================================================
    INIT
 ========================================================= */
 
 window.onload = async () => {
-  // Replace the dataset path below to use your own JSONL file
-  wikipediaDataset = await loadDatasetJSONL("data/wikipedia.jsonl"); // PLACEHOLDER DATA FOR NOW
+  wikipediaDataset = await loadDatasetJSONL("data/wikipedia.jsonl");
+
+  console.log(
+    wikipediaDataset.filter(d => d.label === 1).length,
+    wikipediaDataset.filter(d => d.label === 0).length
+  );
+
+  buildIDF();
 
   observeUrlChange();
 
@@ -66,7 +72,6 @@ function observeUrlChange() {
     if (location.href !== lastUrl) {
       lastUrl = location.href;
       imageClassified = {};
-      lastTextScanSignature = "";
       main();
     }
   }, 300);
@@ -76,19 +81,6 @@ function observeUrlChange() {
    DATASET LOADING (TEXT CLASSIFICATION)
 ========================================================= */
 
-/**
- * DEV NOTE:
- * Replace the `path` below with your own JSONL dataset.
- *
- * Expected JSONL format (one object per line):
- * { "human_text": "..."}
- * OR
- * { "ai_text": "..."}
- *
- * Labels:
- * - 0 = Human
- * - 1 = AI
- */
 async function loadDatasetJSONL(path) {
   try {
     const url = chrome.runtime.getURL(path);
@@ -97,21 +89,53 @@ async function loadDatasetJSONL(path) {
     return text
       .split("\n")
       .filter(Boolean)
-      .map((line) => {
+      .flatMap((line) => {
         try {
           const item = JSON.parse(line);
+          const arr = [];
 
-          if (item.human_text)
-            return { text: normalizeWhitespace(item.human_text), label: 0 };
+          if (item.human_text) {
+            arr.push({
+              text: normalizeWhitespace(item.human_text),
+              label: 0,
+            });
+          }
 
-          if (item.ai_text)
-            return { text: normalizeWhitespace(item.ai_text), label: 1 };
-        } catch { }
-      })
-      .filter(Boolean);
+          if (item.ai_text) {
+            arr.push({
+              text: normalizeWhitespace(item.ai_text),
+              label: 1,
+            });
+          }
+
+          return arr;
+        } catch {
+          return [];
+        }
+      });
   } catch {
     return [];
   }
+}
+
+/* =========================================================
+   TF-IDF BUILD
+========================================================= */
+
+function buildIDF() {
+  const docCount = wikipediaDataset.length;
+  const df = {};
+
+  wikipediaDataset.forEach((d) => {
+    const words = new Set(tokenizeWords(d.text));
+    words.forEach((w) => {
+      df[w] = (df[w] || 0) + 1;
+    });
+  });
+
+  Object.keys(df).forEach((w) => {
+    idfCache[w] = Math.log(docCount / (df[w] + 1));
+  });
 }
 
 /* =========================================================
@@ -206,154 +230,77 @@ function renderImageIcon(results, imgObj) {
 ========================================================= */
 
 function runTextClassification() {
-  if (textScanInFlight) return;
-
   const text = getCleanArticleText();
-  // adjust minimum text length threshold
-  if (!text || text.length < 600) return;
-
-  const sig = text.slice(0, 300);
-  if (sig === lastTextScanSignature) return;
-
-  textScanInFlight = true;
-
   const result = detectGPTStyle(text);
 
   chrome.storage.local.set({ articleAnalysis: result });
-
-  lastTextScanSignature = sig;
-  textScanInFlight = false;
 }
 
 /**
  * MAIN TEXT DETECTION LOGIC
- *
- * Tune weights below to control sensitivity
  */
 function detectGPTStyle(text) {
   if (!wikipediaDataset || wikipediaDataset.length < 10) {
     return baseUnknownResult();
   }
 
-  const datasetScore = compareDataset(text);       // AI %
-  const devHuman = computeDevHumanScore(text);     // Human %
-  const generalHuman = computeGeneralScore(text);  // Human %
-  const aiPenalty = detectAIPatterns(text);        // AI %
+  const aiScore = compareDataset(text);
+  console.log(aiScore);
 
-  // Adjust weights here
-  let humanScore =
-    devHuman * 0.40 +
-    (100 - datasetScore) * 0.35 +
-    generalHuman * 0.25 -
-    aiPenalty * 0.25;
-
-  // Modify squash sensitivity
-  humanScore = squashScore(humanScore);
-
-  // Adjust classification thresholds
   let label =
-    humanScore <= 33.33
+    aiScore >= 50
       ? "AI-generated"
-      : humanScore >= 66.66
-        ? "Human-written"
-        : "Mixed";
+      : "Human-written";
 
-  const finalScore = Number(humanScore.toFixed(2));
   return {
     label,
-    averageAIScore: finalScore,
-    humanPercent: finalScore,
-    aiPercent: Number((100 - humanScore).toFixed(2)),
-    mixedPercent:
-      finalScore > 33.33 && finalScore < 66.66 ? 100 : 0,
+    averageAIScore: Number(aiScore.toFixed(2)),
+    humanPercent: Number((100 - aiScore).toFixed(2)),
+    aiPercent: Number(aiScore.toFixed(2)),
+    mixedPercent: 0,
   };
-}
-
-/* -------------------------
-   FEATURE ENGINEERING
-------------------------- */
-
-/**
- * Increase weight if you want more "human writing signals"
- */
-function computeDevHumanScore(text) {
-  const words = tokenizeWords(text);
-  const sentences = splitSentences(text);
-
-  const pronouns = words.filter((w) =>
-    ["i", "my", "we", "our", "me"].includes(w)
-  ).length;
-
-  const personal = pronouns / (words.length || 1);
-
-  const lengths = sentences.map((s) => tokenizeWords(s).length);
-  const variability = variance(lengths);
-
-  return clamp((personal * 4 + variability / 100) * 100);
-}
-
-/**
- * Add/remove AI phrases here
- */
-function detectAIPatterns(text) {
-  const patterns = [
-    "in conclusion",
-    "overall",
-    "additionally",
-    "furthermore",
-    "this article will",
-  ];
-
-  let count = 0;
-
-  for (let p of patterns) {
-    if (text.toLowerCase().includes(p)) count++;
-  }
-
-  // Adjust penalty strength
-  return clamp(count * 10, 0, 40);
 }
 
 /**
  * DATASET SIMILARITY
- *
- * DEV OPTIONS:
- * - Increase sample size (currently 30)
- * - Replace cosine similarity with embeddings later
  */
 function compareDataset(text) {
-  const vec = textToVector(text);
+  const vec = textToVectorTFIDF(text);
 
   const human = getBalancedSamples(0).map((s) =>
-    cosineSimilarity(vec, textToVector(s.text))
+    cosineSimilarity(vec, textToVectorTFIDF(s.text))
   );
+  console.log("Human similarity scores:", human);
 
   const ai = getBalancedSamples(1).map((s) =>
-    cosineSimilarity(vec, textToVector(s.text))
+    cosineSimilarity(vec, textToVectorTFIDF(s.text))
   );
+  console.log("AI similarity scores:", ai);
 
   return (mean(ai) / (mean(ai) + mean(human) + 1e-6)) * 100;
 }
 
 function getBalancedSamples(label) {
-  // Increase slice size for higher accuracy (slower)
-  return wikipediaDataset.filter((d) => d.label === label).slice(0, 30);
+  return wikipediaDataset.filter((d) => d.label === label).slice(0, 50);
 }
 
-/**
- * General lexical diversity
- */
-function computeGeneralScore(text) {
+/* =========================================================
+   TF-IDF VECTOR
+========================================================= */
+
+function textToVectorTFIDF(text) {
   const words = tokenizeWords(text);
+  const freq = {};
 
-  return (new Set(words).size / words.length) * 100;
-}
+  words.forEach((w) => (freq[w] = (freq[w] || 0) + 1));
 
-/**
- * Controls how extreme scores behave
- */
-function squashScore(x) {
-  return 100 / (1 + Math.exp(-(x - 50) / 12));
+  const vec = {};
+  Object.keys(freq).forEach((w) => {
+    const idf = idfCache[w] || 0;
+    vec[w] = freq[w] * idf;
+  });
+
+  return vec;
 }
 
 /* =========================================================
@@ -366,13 +313,6 @@ function tokenizeWords(t) {
 
 function splitSentences(t) {
   return t.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
-}
-
-function textToVector(text) {
-  const words = tokenizeWords(text);
-  const freq = {};
-  words.forEach((w) => (freq[w] = (freq[w] || 0) + 1));
-  return freq;
 }
 
 function cosineSimilarity(a, b) {
