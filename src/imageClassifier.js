@@ -133,12 +133,16 @@ function main() {
 
 function runImageClassification() {
   // Get the cover image
-  const imgCover = document.getElementsByClassName("crayons-article__cover__image")[0];
+  try {
+    const imgCover = document.getElementsByClassName("crayons-article__cover__image")[0];
 
-  if (!(imgCover.src in imageClassified)) {
-    imageClassified[imgCover.src] = true; //Store it
-    renderImageIcon(null, imgCover.parentElement); // We get the parent of the IMG element so that we can append the icon to the user
-    imageClassificationScan(imgCover); // Classify the image
+    if (!(imgCover.src in imageClassified)) {
+      imageClassified[imgCover.src] = true; //Store it
+      renderImageIcon(null, imgCover.parentElement); // We get the parent of the IMG element so that we can append the icon to the user
+      imageClassificationScan(imgCover); // Classify the image
+    }
+  } catch {
+    console.log("No image detected");
   }
 }
 
