@@ -2,7 +2,7 @@
 
 ## Description
 
-A Google Chrome Extension that integrates Machine Learning to determine if the image and the dev.to article, that the user is viewing, is AI-Generated. This uses Tensorflow.js to perform Image Classification and Text Classification.
+**A Google Chrome Extension that integrates Machine Learning to determine if the image and the dev.to article, that the user is viewing, is AI-Generated.** This uses Tensorflow.js to perform Image Classification and Text Classification.
 
 The model is trained using [Teachable Machine](https://teachablemachine.withgoogle.com/) by Google where it is train from 866 images, that consists of AI and Non-AI images, using the following settings:
 
@@ -10,7 +10,9 @@ The model is trained using [Teachable Machine](https://teachablemachine.withgoog
 - Batch Size: 16
 - Learning Rate: 0.0001
 
-**This Chrome Extension is compatible with dev.to. More information on the Chrome Extension and how it is built: https://dev.to/devengers/two-devs-and-a-copilot-created-classifierai-a-prototype-chrome-extension-that-automatically-4fge**
+
+
+
 
 ## Technologies Used
 
@@ -24,6 +26,10 @@ The model is trained using [Teachable Machine](https://teachablemachine.withgoog
 
 **Extension Tooling:** [<img alt="Vite" src="https://img.shields.io/badge/-Vite-0F172A?style=flat-square&logo=vite&logoColor=646CFF" />](https://vitejs.dev/)
 [<img alt="CRXJS" src="https://img.shields.io/badge/-CRXJS-0F172A?style=flat-square&logo=googlechrome&logoColor=4285F4" />](https://crxjs.dev/)
+
+
+
+
 
 ## How to Run
 
@@ -53,7 +59,16 @@ The model is trained using [Teachable Machine](https://teachablemachine.withgoog
 
 7. The extension is now installed and ready to use.
 
+
+
+
+
 ## Demo
+
+This is the overall demo of the use of the Chrome Extension on dev.to!
+
+
+**For more information, find our article here: https://dev.to/devengers/two-devs-and-a-copilot-created-classifierai-a-prototype-chrome-extension-that-automatically-4fge**
 
 ### Installation
 
@@ -75,11 +90,21 @@ The model is trained using [Teachable Machine](https://teachablemachine.withgoog
 
 2. Click a DEV article and see results.
 
+
+
+
+
+
 ## Contributing
 
 ClassifierAI is an open-source project, and contributions of all sizes are welcome.
 
 For contribution guidelines, development setup, and pull request workflow, please see [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+
+
+
+
 
 ## License
 
