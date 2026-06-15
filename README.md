@@ -26,6 +26,7 @@ The model is trained using [Teachable Machine](https://teachablemachine.withgoog
 
 **Extension Tooling:** [<img alt="Vite" src="https://img.shields.io/badge/-Vite-0F172A?style=flat-square&logo=vite&logoColor=646CFF" />](https://vitejs.dev/)
 [<img alt="CRXJS" src="https://img.shields.io/badge/-CRXJS-0F172A?style=flat-square&logo=googlechrome&logoColor=4285F4" />](https://crxjs.dev/)
+[<img alt="Docker" src="https://img.shields.io/badge/docker-%230db7ed.svg?style=flat-square&logo=docker&logoColor=4285F4" />](https://docker.dev/)
 
 
 
