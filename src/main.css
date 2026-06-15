@@ -5,8 +5,8 @@
 /* Status Icon */
 #FrancisTRStatusAI {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  width: 1.3em !important;
-  height: 1.3em !important;
+  bottom: 10px;
+  right: 10px;
+  width: 2em !important;
+  height: 2em !important;
 }

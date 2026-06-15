@@ -10,13 +10,15 @@ const IMAGE_MODEL_BASE_URL =
 const IMAGE_MODEL_URL = `${IMAGE_MODEL_BASE_URL}model.json`;
 const IMAGE_METADATA_URL = `${IMAGE_MODEL_BASE_URL}metadata.json`;
 
-let imageModelPromise = loadImageModel();
+let imageModelPromise = loadImageModel(); // Loading the model
 
 async function loadImageModel() {
   await tf.ready();
   try {
     await tf.setBackend("webgl");
-  } catch { }
+  } catch {
+    console.error("Failed to set WebGL backend");
+  }
 
   const [model, metadata] = await Promise.all([
     tf.loadLayersModel(IMAGE_MODEL_URL),
@@ -30,8 +32,8 @@ async function loadImageModel() {
    GLOBAL STATE
 ========================================================= */
 
-let wikipediaDataset = null;
-let imageClassified = {};
+let wikipediaDataset = null; // Wikipedia dataset for text classification (Placeholder)
+let imageClassified = {}; // Uses Teachable Machines
 
 let lastUrl = location.href;
 let lastTextScanSignature = "";
@@ -43,7 +45,7 @@ let textScanInFlight = false;
 
 window.onload = async () => {
   // Replace the dataset path below to use your own JSONL file
-  wikipediaDataset = await loadDatasetJSONL("data/wikipedia.jsonl");
+  wikipediaDataset = await loadDatasetJSONL("data/wikipedia.jsonl"); // PLACEHOLDER DATA FOR NOW
 
   observeUrlChange();
 
@@ -52,7 +54,7 @@ window.onload = async () => {
     subtree: true,
   });
 
-  main();
+  main(); // Main function
 };
 
 /* =========================================================
@@ -130,26 +132,20 @@ function main() {
 ========================================================= */
 
 function runImageClassification() {
-  const imgs = document.querySelectorAll(
-    ".crayons-article__cover, .crayons-article__main-image"
-  );
+  // Get the cover image
+  const imgCover = document.getElementsByClassName("crayons-article__cover__image")[0];
 
-  for (let i of imgs) {
-    const imgTag = i.querySelector("img");
-    if (!imgTag) continue;
-
-    if (!(imgTag.src in imageClassified)) {
-      imageClassified[imgTag.src] = true;
-      renderImageIcon(null, i);
-      imageClassificationScan(i);
-    }
+  if (!(imgCover.src in imageClassified)) {
+    imageClassified[imgCover.src] = true; //Store it
+    renderImageIcon(null, imgCover.parentElement); // We get the parent of the IMG element so that we can append the icon to the user
+    imageClassificationScan(imgCover); // Classify the image
   }
 }
 
 async function imageClassificationScan(imgObj) {
   const img = new Image();
   img.crossOrigin = "anonymous";
-  img.src = imgObj.querySelector("img").src;
+  img.src = imgObj.src;
 
   await new Promise((r) => (img.onload = r));
 
@@ -163,6 +159,7 @@ async function imageClassificationScan(imgObj) {
       .div(255)
       .expandDims();
 
+    // Run the model on the image
     const pred = model.predict(tensor);
     const scores = await pred.data();
 
@@ -175,9 +172,9 @@ async function imageClassificationScan(imgObj) {
 
     results.sort((a, b) => b.confidence - a.confidence);
 
-    renderImageIcon(results, imgObj);
+    renderImageIcon(results, imgObj.parentElement);
   } catch {
-    renderImageIcon(null, imgObj);
+    renderImageIcon(null, imgObj.parentElement);
   }
 }
 
@@ -188,13 +185,9 @@ function renderImageIcon(results, imgObj) {
   imgObj.style.position = "relative";
 
   const icon = document.createElement("img");
+  icon.id = "FrancisTRStatusAI";
 
-  icon.style.position = "absolute";
-  icon.style.bottom = "10px";
-  icon.style.right = "10px";
-  icon.style.width = "42px";
-  icon.style.height = "42px";
-
+  // Assign the icon based on the result. With no result, add the loading icon
   icon.src = !results
     ? chrome.runtime.getURL("Images/loading.gif")
     : results[0].label === "AI"
@@ -205,7 +198,7 @@ function renderImageIcon(results, imgObj) {
 }
 
 /* =========================================================
-   TEXT CLASSIFICATION (FULLY TUNABLE)
+   TEXT CLASSIFICATION
 ========================================================= */
 
 function runTextClassification() {
