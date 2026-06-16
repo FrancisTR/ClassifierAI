@@ -69,6 +69,8 @@ The model is trained using [Teachable Machine](https://teachablemachine.withgoog
 This is the overall demo of the use of the Chrome Extension on dev.to!
 
 
+https://github.com/user-attachments/assets/398b28c8-2634-4f55-ae6b-f22a9a208651
+
 **For more information, find our article here: https://dev.to/devengers/two-devs-and-a-copilot-created-classifierai-a-prototype-chrome-extension-that-automatically-4fge**
 
 ### Installation
