@@ -3,27 +3,39 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="main.css" />
     <style>
       html {
-        width: 300px; /* max: 800px */
+        width: 320px; /* max: 800px */
         height: 380px;
-        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      body, body * {
+        font-family: 'Varela Round', Helvetica, sans-serif;
       }
 
       #popUpBody {
         color: #f8fafc;
-        background: #012444;
+        background: rgb(3, 3, 12);
       }
 
       .AIStatus {
-        background: #002645;
-        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: rgba(3, 7, 10, 0.25);
+        border: 1.5px solid rgba(4, 223, 236, 0.25);
         border-radius: 12px;
         box-shadow:
           0 4px 12px rgba(0, 0, 0, 0.18),
-          0 1px 2px rgba(0, 0, 0, 0.1);
+          0 1px 2px rgba(0, 0, 0, 0.1),
+          0 0 12px rgba(4, 223, 236, 0.4);
       }
+
+      #statsChart {
+        filter: drop-shadow(0 0 8px rgba(225, 255, 225, 0.6));
+      }
+
     </style>
     <title>ClassifierAI</title>
   </head>
@@ -39,7 +51,7 @@
         <h1 class="font-medium text-base tracking-wide">ClassifierAI</h1>
 
         <div
-          class="relative h-6 w-11 rounded-full bg-slate-500 transition-colors duration-200 peer-checked:bg-blue-600 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:duration-200 after:content-[''] peer-checked:after:translate-x-5"
+          class="relative h-6 w-11 rounded-full bg-slate-500 transition-colors duration-200 peer-checked:bg-[#04DFEC] after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:duration-200 after:content-[''] peer-checked:after:translate-x-5"
         ></div>
       </label>
     </header>
@@ -61,20 +73,20 @@
           class="flex items-center justify-between border-b-[rgba(255,255,255,0.15)] border-b py-4"
         >
           <div class="flex gap-2 flex-row items-center">
-            <img src="../Images/AIFree.png" width="35" alt="Human icon" />
+            <img src="../Images/Human-Icon.png" width="35" alt="Human icon" />
             <p class="text-base text-slate-100">Human</p>
           </div>
 
-          <p id="NotAIStat" class="text-lg font-medium text-[#22c55e]">0%</p>
+          <p id="NotAIStat" class="text-lg font-medium text-[#00F615]">0%</p>
         </li>
 
         <li class="flex items-center justify-between py-4">
           <div class="flex gap-2 flex-row items-center">
-            <img src="../Images/AIGenerated.png" width="35" alt="AI Generated icon" />
+            <img src="../Images/AI-Icon.png" width="35" alt="AI Generated icon" />
             <p class="text-base text-slate-100">AI Generated</p>
           </div>
 
-          <p id="AIGenStat" class="text-lg font-medium text-[#ef4444]">0%</p>
+          <p id="AIGenStat" class="text-lg font-medium text-[#F60004]">0%</p>
         </li>
       </ul>
     </main>

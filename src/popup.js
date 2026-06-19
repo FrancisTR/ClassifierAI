@@ -20,7 +20,7 @@ function renderChart(humanPercent, aiPercent) {
     datasets: [
       {
         data: [humanPercent, aiPercent],
-        backgroundColor: ["#22c55e", "#ef4444"],
+        backgroundColor: ["#00F615", "#F60004"],
         cutout: "70%",
         borderWidth: 0,
       },
