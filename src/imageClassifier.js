@@ -357,8 +357,10 @@ function normalizeWhitespace(t) {
 function baseUnknownResult() {
   return {
     label: "Unknown",
-    humanPercent: 50,
-    aiPercent: 50,
+    averageAIScore: 0,
+    humanPercent: 0,
+    aiPercent: 0,
+    mixedPercent: 0,
   };
 }
 
